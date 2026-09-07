@@ -208,6 +208,15 @@ const DANKE_DELAY = 2500;
     sync();
   });
 
+
+  /* Fehlermarkierung sofort entfernen, sobald der Nutzer korrigiert */
+  const clearError = (e) => {
+    const f = e.target.closest('.field');
+    if (f) { f.classList.remove('has-error'); e.target.classList.remove('is-invalid'); }
+  };
+  form.addEventListener('input', clearError);
+  form.addEventListener('change', clearError);
+
   const validate = (n) => {
     const step = stepsEls[n - 1];
     let ok = true;

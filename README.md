@@ -90,7 +90,10 @@ Schritt 1 Interesse (Mehrfachauswahl) → 2 Vorname → 3 Nachname → 4 Telefon
 - Feine konzentrische Kreislinien als Hintergrundelement (`.rings`) in Hero, Interviews und CTA-Band.
 - Interviews im Dunkelgrün-Block, abwechselnd Video links/rechts, Zitat in Poppins-Versalien.
 - **CTA-Bänder mit Foto** (`.cta-photo`) an drei Stellen: nach dem Titan-/Keramik-Vergleich, nach der Zotzmann-Sektion und nach dem Ablauf. Hintergrundbild kommt per `style="background-image:url('assets/img/…')"` direkt ins HTML – **nicht** über eine CSS-Variable, sonst löst der Browser den Pfad relativ zum Stylesheet (`assets/css/`) auf und das Bild fehlt.
-- **Checkboxen:** Die globale Feld-Regel setzt `appearance: none`. Native Checkboxen wären dadurch unsichtbar – `.field--check input[type="checkbox"]` bringt deshalb eine eigene Box mit lindgrünem Haken mit. Bei neuen Checkboxen diese Klasse verwenden.
+- **Checkboxen:** Die globale Feld-Regel setzt `appearance: none`. Native Checkboxen wären dadurch unsichtbar – `.field--check input[type="checkbox"]` bringt deshalb eine eigene Box mit lindgrünem Haken mit. Zwei Fallen dabei:
+  1. Der Fehlerzustand (`.has-error`) darf **nur `background-color`** setzen. Mit der Kurzform `background` löscht er das Haken-Bild der angehakten Box – die Checkbox wirkt dann tot.
+  2. Die `:checked`-Regel steht bewusst **nach** `.has-error`, damit sie den Fehlerzustand überschreibt.
+- **Sofort-Feedback:** `input`/`change` auf dem Formular entfernen `has-error` und `is-invalid` direkt bei der Korrektur – nicht erst beim nächsten Klick auf „Weiter“.
 - Buttons mit Zusatzzeile (`<small>`) sind Flex-Spalten: Der Haupttext muss in `<span class="btn__label">` stehen, sonst wird jeder Textabschnitt zu einer eigenen Zeile.
 - **Typografie:** `text-wrap: balance` für Headlines, `pretty` für Fließtext, dazu ein Widont-Skript in `main.js`, das die letzten beiden Wörter mit geschütztem Leerzeichen bindet (nur bei kurzen Wortpaaren und Elementen ab 210 px Breite, damit nichts überläuft).
 - **Karten-Raster** nutzen `auto-fit` + `justify-content: center` – unvollständige Reihen stehen mittig statt linksbündig.
