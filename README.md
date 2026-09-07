@@ -74,6 +74,7 @@ Statischer Nachbau von `info.implantat-zahnarzt-balingen.de` (bisher OnePage) in
 | Aufruf | eigene Seite auf Netlify | iFrame-Embed in Webflow (siehe `WEBFLOW-EMBED.md`) |
 | Netlify-Formular | `erstgespraech` | `praxis-anfrage` |
 | Fragen | 6 Schritte (Keramik-Fokus) | 7 Schritte (Fragenkatalog des bisherigen Typeforms) |
+| Quellen-Auswahl | identisch: Google-Suche, ChatGPT/KI, Google Ads, Facebook, Instagram, YouTube, Empfehlung, Presse, Sonstiges | dito |
 | Abschluss | Calendly als Pflichtschritt | Calendly als Pflichtschritt |
 | Danach | Weiterleitung auf `/dankeseite` | Eltern-Fenster leitet auf `/dankeseite` |
 
@@ -89,6 +90,7 @@ Schritt 1 Interesse (Mehrfachauswahl) → 2 Vorname → 3 Nachname → 4 Telefon
 - Feine konzentrische Kreislinien als Hintergrundelement (`.rings`) in Hero, Interviews und CTA-Band.
 - Interviews im Dunkelgrün-Block, abwechselnd Video links/rechts, Zitat in Poppins-Versalien.
 - **CTA-Bänder mit Foto** (`.cta-photo`) an drei Stellen: nach dem Titan-/Keramik-Vergleich, nach der Zotzmann-Sektion und nach dem Ablauf. Hintergrundbild kommt per `style="background-image:url('assets/img/…')"` direkt ins HTML – **nicht** über eine CSS-Variable, sonst löst der Browser den Pfad relativ zum Stylesheet (`assets/css/`) auf und das Bild fehlt.
+- **Checkboxen:** Die globale Feld-Regel setzt `appearance: none`. Native Checkboxen wären dadurch unsichtbar – `.field--check input[type="checkbox"]` bringt deshalb eine eigene Box mit lindgrünem Haken mit. Bei neuen Checkboxen diese Klasse verwenden.
 - Buttons mit Zusatzzeile (`<small>`) sind Flex-Spalten: Der Haupttext muss in `<span class="btn__label">` stehen, sonst wird jeder Textabschnitt zu einer eigenen Zeile.
 - **Typografie:** `text-wrap: balance` für Headlines, `pretty` für Fließtext, dazu ein Widont-Skript in `main.js`, das die letzten beiden Wörter mit geschütztem Leerzeichen bindet (nur bei kurzen Wortpaaren und Elementen ab 210 px Breite, damit nichts überläuft).
 - **Karten-Raster** nutzen `auto-fit` + `justify-content: center` – unvollständige Reihen stehen mittig statt linksbündig.

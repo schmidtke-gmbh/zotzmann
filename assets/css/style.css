@@ -678,7 +678,23 @@ p:last-child { margin-bottom: 0; }
 .field__error { display: none; color: var(--red); font-size: .85rem; }
 .field.has-error .field__error { display: block; }
 .field--check { grid-template-columns: auto 1fr; align-items: start; gap: 12px; font-size: .9rem; color: var(--green-80); }
-.field--check input { width: 20px; height: 20px; padding: 0; margin-top: 3px; accent-color: var(--lime-dark); }
+/* Eigene Checkbox – die globale Regel oben setzt appearance:none, dadurch würde eine
+   native Checkbox unsichtbar bleiben (kein Haken beim Klick). */
+.field--check input[type="checkbox"] {
+  width: 26px; height: 26px; flex: none; padding: 0; margin: 0;
+  border: 1px solid rgba(32, 54, 42, .4); background: var(--white);
+  cursor: pointer; transition: background-color .18s var(--ease), border-color .18s var(--ease), transform .12s var(--ease);
+}
+.field--check input[type="checkbox"]:hover { border-color: var(--lime-dark); background: var(--lime-10); }
+.field--check input[type="checkbox"]:active { transform: scale(.92); }
+.field--check input[type="checkbox"]:focus-visible { outline: 3px solid var(--lime); outline-offset: 2px; }
+.field--check input[type="checkbox"]:checked {
+  background-color: var(--lime); border-color: var(--lime);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5L20 7'/%3E%3C/svg%3E");
+  background-size: 17px; background-position: center; background-repeat: no-repeat;
+}
+.field--check label { cursor: pointer; }
+.field--check.has-error input[type="checkbox"] { border-color: var(--red); background: rgba(200, 85, 61, .07); }
 .field--check a { text-decoration: underline; }
 .funnel__nav { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 8px; }
 .funnel__back { color: var(--green-80); font-size: .9rem; display: inline-flex; align-items: center; gap: 6px; }
