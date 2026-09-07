@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /termin.html
+Disallow: /danke.html
+Disallow: /praxis-anfrage.html
+Sitemap: https://info.implantat-zahnarzt-balingen.de/sitemap.xml
