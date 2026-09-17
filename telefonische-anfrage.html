@@ -160,15 +160,21 @@
     HOST_LOKAL.indexOf(location.hostname) !== -1 ||
     /\.local$/.test(location.hostname);
 
+  /* Drei Ziele nacheinander – je nach Site-Konfiguration greift ein anderes. */
   async function uebermitteln(daten) {
     const opt = { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: daten.toString() };
-    try {
-      let res = await fetch('/', opt);
-      if (!res.ok) res = await fetch(location.pathname, opt);
-      return res.ok ? { ok: true } : { ok: false, grund: 'HTTP ' + res.status };
-    } catch (ex) {
-      return { ok: false, grund: ex && ex.message ? ex.message : 'Netzwerkfehler' };
+    const ziele = ['/', location.pathname, form.getAttribute('action') || '/'];
+    let letzter = '';
+    for (const ziel of ziele) {
+      try {
+        const res = await fetch(ziel, opt);
+        if (res.ok) return { ok: true, ziel: ziel };
+        letzter = 'HTTP ' + res.status + ' bei ' + ziel;
+      } catch (ex) {
+        letzter = (ex && ex.message ? ex.message : 'Netzwerkfehler') + ' bei ' + ziel;
+      }
     }
+    return { ok: false, grund: letzter };
   }
 
   const form = document.getElementById('telForm');

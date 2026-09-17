@@ -98,6 +98,35 @@ Es wird ausgefüllt, während jemand anruft – deshalb bewusst anders gebaut:
 Erreichbar unter `/telefonische-anfrage` (der Vertipper `/telfonische-anfrage`
 funktioniert ebenfalls). Die Seite steht auf `noindex` und in der `robots.txt`.
 
+## ⚠️ Netlify Forms muss einmal eingeschaltet werden
+
+**Netlify erkennt Formulare nicht von allein.** Die Formularerkennung ist bei neuen
+Projekten standardmäßig **aus**; ohne sie laufen alle Absendungen ins Leere, egal wie
+korrekt das HTML ist. So wird sie aktiviert:
+
+1. In Netlify das Projekt öffnen → **Forms**.
+2. **Enable form detection** anklicken.
+3. **Einmal neu deployen** – die Erkennung greift erst beim nächsten Deploy.
+4. Danach jedes Formular einmal live durchlaufen. Unter **Forms** müssen dann
+   `erstgespraech`, `praxis-anfrage` und `telefonische-anfrage` als eigene Einträge
+   auftauchen.
+5. Für jedes der drei Formulare **Submission notifications** einrichten – die
+   Einstellung gilt immer nur für ein Formular.
+
+Das HTML erfüllt alle Anforderungen (geprüft): `data-netlify="true"`, verstecktes
+`form-name` passend zum `name`, alle Felder statisch im Markup, Honeypot `bot-field`,
+URL-kodierter POST mit `application/x-www-form-urlencoded`.
+
+**Was passiert, wenn die Übermittlung scheitert:** Der Funnel bricht **nicht** ab,
+sondern führt weiter zum Kalender. Der Termin ist das eigentliche Ziel, und Calendly
+erfasst Name, E-Mail und Telefonnummer ohnehin selbst – ein Abbruch würde die Buchung
+kosten. Der Fehler geht stattdessen in die Browser-Konsole und als `lead_submit_failed`
+in den dataLayer. **Dieses Ereignis in GTM auf einen Alarm legen**, sonst fällt ein
+stiller Ausfall wochenlang nicht auf.
+
+Beim internen Telefonformular ist es umgekehrt: Dort **bleibt** die Fehlermeldung
+stehen, weil die Daten sonst ersatzlos verloren wären.
+
 ## Formulare lokal testen
 
 Netlify Forms gibt es **nur auf der veröffentlichten Seite**. Beim Testen vorher

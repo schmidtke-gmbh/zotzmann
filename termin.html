@@ -117,7 +117,7 @@
             <option>Sonstiges</option>
           </select><span class="field__error">Bitte wählen Sie eine Option.</span></div>
         <p class="field__error" id="submitError" style="display:none;margin-bottom:14px">Die Übermittlung hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns an: <a href="tel:+4974335811">07433 5811</a></p>
-        <div class="funnel__nav"><button type="button" class="funnel__back" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Zurück</button><button type="submit" class="btn" id="submitBtn">Daten übermitteln &amp; Termin wählen</button></div>
+        <div class="funnel__nav"><button type="button" class="funnel__back" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Zurück</button><button type="submit" class="btn" id="submitBtn">Termin wählen</button></div>
       </section>
     </form>
 
@@ -188,15 +188,23 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
   /* Sendet die Formulardaten. Erst an "/", wie Netlify es empfiehlt;
      scheitert das mit einem HTTP-Fehler, noch einmal an den Seitenpfad –
      manche Setups nehmen die Anfrage nur dort an. */
+  /* Sendet die Daten an Netlify. Drei Ziele nacheinander, weil je nach
+     Site-Konfiguration ein anderes greift: Wurzel, eigener Seitenpfad,
+     dann das action-Ziel des Formulars. */
   async function uebermitteln(daten) {
     const opt = { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: daten.toString() };
-    try {
-      let res = await fetch('/', opt);
-      if (!res.ok) res = await fetch(location.pathname, opt);
-      return res.ok ? { ok: true } : { ok: false, grund: 'HTTP ' + res.status };
-    } catch (ex) {
-      return { ok: false, grund: ex && ex.message ? ex.message : 'Netzwerkfehler' };
+    const ziele = ['/', location.pathname, form.getAttribute('action') || '/'];
+    let letzter = '';
+    for (const ziel of ziele) {
+      try {
+        const res = await fetch(ziel, opt);
+        if (res.ok) return { ok: true, ziel: ziel };
+        letzter = 'HTTP ' + res.status + ' bei ' + ziel;
+      } catch (ex) {
+        letzter = (ex && ex.message ? ex.message : 'Netzwerkfehler') + ' bei ' + ziel;
+      }
     }
+    return { ok: false, grund: letzter };
   }
 
   const form = document.getElementById('funnelForm');
@@ -275,18 +283,19 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
     btn.disabled = true; btn.textContent = 'Wird übermittelt …';
     const data = new URLSearchParams(new FormData(form));
     const ergebnis = await uebermitteln(data);
-    if (!ergebnis.ok) {
-      if (istTestumgebung) {
-        console.info('[Funnel] Testumgebung erkannt – Übermittlung übersprungen (' + ergebnis.grund + '). Auf der veröffentlichten Seite läuft sie normal.');
-      } else {
-        console.error('[Funnel] Übermittlung fehlgeschlagen:', ergebnis.grund);
-        err.style.display = 'block';
-        btn.disabled = false; btn.textContent = 'Daten übermitteln & Termin wählen';
-        return;
-      }
-    }
     window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ event: 'lead_submitted', interesse: document.getElementById('interesseField').value });
+    if (!ergebnis.ok) {
+      /* Bewusst NICHT abbrechen: Der Termin im Kalender ist das Ziel, und
+         Calendly erfasst Name, E-Mail und Telefonnummer ohnehin selbst.
+         Den Nutzer hier zu blockieren würde die Buchung kosten – der Fehler
+         gehört ins Log und in den dataLayer, nicht vor den Patienten. */
+      console.error('[Funnel] Netlify-Übermittlung fehlgeschlagen:', ergebnis.grund,
+        istTestumgebung ? '(Testumgebung – auf der veröffentlichten Seite prüfen)'
+                        : '(LIVE! In Netlify prüfen: Site configuration → Forms → Form detection aktiviert? Deploy mit dem Formular durch?)');
+      window.dataLayer.push({ event: 'lead_submit_failed', funnel: 'erstgespraech', grund: ergebnis.grund });
+    } else {
+      window.dataLayer.push({ event: 'lead_submitted', funnel: 'erstgespraech', interesse: document.getElementById('interesseField').value });
+    }
     showCalendly();
   });
 
