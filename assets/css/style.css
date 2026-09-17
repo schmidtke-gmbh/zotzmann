@@ -797,3 +797,11 @@ p:last-child { margin-bottom: 0; }
 
 .form-mark { display: grid; place-items: center; margin-top: 30px; padding-top: 24px; border-top: var(--line-soft); opacity: .5; }
 .form-mark img { width: 150px; height: auto; }
+
+/* Agentur-Hinweis im Footer: hebt sich vom gedimmten Copyright ab.
+   Die Umgebung steht auf 60 % Deckkraft – deshalb hier volle Deckkraft
+   setzen, sonst bleibt auch Fettdruck blass. */
+.footer__by { color: rgba(250,248,242,.92); font-weight: 500; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.footer__by strong { font-family: var(--font-head); font-weight: 700; letter-spacing: .02em; color: var(--lime); }
+.footer__by:hover { color: #fff; }
+.footer__by:hover strong { color: #fff; }

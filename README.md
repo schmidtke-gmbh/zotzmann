@@ -98,6 +98,31 @@ Es wird ausgefüllt, während jemand anruft – deshalb bewusst anders gebaut:
 Erreichbar unter `/telefonische-anfrage` (der Vertipper `/telfonische-anfrage`
 funktioniert ebenfalls). Die Seite steht auf `noindex` und in der `robots.txt`.
 
+## Formulare lokal testen
+
+Netlify Forms gibt es **nur auf der veröffentlichten Seite**. Beim Testen vorher
+läuft die Übermittlung deshalb zwangsläufig ins Leere – die Formulare erkennen das
+und gehen trotzdem weiter zum Kalender bzw. zur Bestätigung. Erkannt werden:
+
+* `file://` (Datei per Doppelklick geöffnet),
+* `localhost`, `127.0.0.1`, `0.0.0.0`, `::1`,
+* Hostnamen, die auf `.local` enden.
+
+In der Browser-Konsole steht dann eine Zeile wie
+`[Funnel] Testumgebung erkannt – Übermittlung übersprungen (HTTP 501)`.
+**Das ist kein Fehler**, sondern der erwartete Zustand vor dem Deploy.
+
+Erscheint die rote Meldung „Die Übermittlung hat leider nicht geklappt" trotzdem,
+läuft die Seite bereits unter einer echten Domain. Dann sind das die üblichen Ursachen:
+
+1. Der Deploy mit dem Formular im HTML ist noch nicht durch – Netlify erkennt ein
+   Formular erst beim Ausliefern der statischen Datei.
+2. In Netlify ist unter **Forms** die Formularerkennung nicht aktiv.
+3. Ein Feld entsteht erst per JavaScript und fehlt deshalb im statischen HTML.
+
+Der genaue Grund steht immer in der Browser-Konsole unter
+`[Funnel] Übermittlung fehlgeschlagen: …`.
+
 ## Funnel-Logik
 
 Schritt 1 Interesse (Mehrfachauswahl) → 2 Vorname → 3 Nachname → 4 Telefon/E-Mail + Datenschutz → 5 Erreichbarkeit → 6 Quelle + **Absenden** (Netlify) → **7 Calendly** mit rotem Hinweisbalken „<Name>, bitte buchen Sie jetzt Ihren Termin – ohne festen Telefontermin können wir Sie nicht zurückrufen“. Der Kalender steht direkt darunter, ohne Zwischenschritte, damit niemand die Buchung für optional hält., vorbefüllt mit Name/E-Mail. Nach Buchung (Calendly-Event `event_scheduled`) erscheint die Bestätigung. `termin.html#calendly` springt direkt zum Kalender (z. B. für E-Mail-Links).

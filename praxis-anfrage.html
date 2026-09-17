@@ -163,6 +163,33 @@ const DANKE_DELAY = 2500;
 
 (function () {
   'use strict';
+
+  /* ---------- Testumgebung erkennen ----------
+     Netlify Forms gibt es nur auf der ausgelieferten Seite. Wird die Datei
+     lokal geöffnet (Doppelklick = file://) oder über einen Entwicklungsserver
+     (localhost, 127.0.0.1, Live Server, Netlify-Preview auf .local),
+     gibt es keinen Endpunkt – der Funnel soll trotzdem bis zum Kalender
+     durchlaufen, sonst lässt er sich nicht testen. */
+  const HOST_LOKAL = ['localhost', '127.0.0.1', '0.0.0.0', '::1', '[::1]'];
+  const istTestumgebung =
+    (location.protocol !== 'http:' && location.protocol !== 'https:') ||
+    HOST_LOKAL.indexOf(location.hostname) !== -1 ||
+    /\.local$/.test(location.hostname);
+
+  /* Sendet die Formulardaten. Erst an "/", wie Netlify es empfiehlt;
+     scheitert das mit einem HTTP-Fehler, noch einmal an den Seitenpfad –
+     manche Setups nehmen die Anfrage nur dort an. */
+  async function uebermitteln(daten) {
+    const opt = { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: daten.toString() };
+    try {
+      let res = await fetch('/', opt);
+      if (!res.ok) res = await fetch(location.pathname, opt);
+      return res.ok ? { ok: true } : { ok: false, grund: 'HTTP ' + res.status };
+    } catch (ex) {
+      return { ok: false, grund: ex && ex.message ? ex.message : 'Netzwerkfehler' };
+    }
+  }
+
   const form = document.getElementById('funnelForm');
   const stepsEls = Array.from(document.querySelectorAll('.fstep'));
   const bars = Array.from(document.querySelectorAll('.funnel__progress i'));
@@ -254,12 +281,14 @@ const DANKE_DELAY = 2500;
     err.style.display = 'none';
     btn.disabled = true; btn.textContent = 'Wird übermittelt …';
     const data = new URLSearchParams(new FormData(form));
-    try {
-      const res = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: data.toString() });
-      if (!res.ok && location.protocol !== 'file:' && location.hostname !== 'localhost') throw new Error('HTTP ' + res.status);
-    } catch (ex) {
-      if (location.protocol !== 'file:' && location.hostname !== 'localhost') {
-        err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Anfrage absenden & Termin wählen';
+    const ergebnis = await uebermitteln(data);
+    if (!ergebnis.ok) {
+      if (istTestumgebung) {
+        console.info('[Funnel] Testumgebung erkannt – Übermittlung übersprungen (' + ergebnis.grund + '). Auf der veröffentlichten Seite läuft sie normal.');
+      } else {
+        console.error('[Funnel] Übermittlung fehlgeschlagen:', ergebnis.grund);
+        err.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Anfrage absenden & Termin wählen';
         sendHeight();
         return;
       }

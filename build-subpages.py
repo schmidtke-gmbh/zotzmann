@@ -166,7 +166,7 @@ body += cta_photo("praxis-raum.webp", "Unsicher bei der Materialwahl?", "Wir sag
 body += '\n' + video + praxis + reviews + faq + final_cta
 pages["vergleichkeramikimplantate.html"] = page(
     "vergleichkeramikimplantate",
-    "Keramik- vs. Titanimplantate: Der Vergleich | Zahnarzt Zotzmann",
+    "Keramik- oder Titanimplantat? Der Vergleich | Zotzmann",
     "Titan oder Keramik? Vor- und Nachteile im direkten Vergleich: Metallfreiheit, Ästhetik, Verträglichkeit, Kosten. Beratung in Balingen – kostenloses Telefongespräch.",
     "Keramikimplantate vs. Titan: Der ehrliche Vergleich",
     body, breadcrumb_ld("Keramik vs. Titan", "vergleichkeramikimplantate"), og_image="implantate-keramik-3.webp")
