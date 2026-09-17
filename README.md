@@ -202,3 +202,11 @@ Schritt 1 Interesse (Mehrfachauswahl) → 2 Vorname → 3 Nachname → 4 Telefon
 - Ablauf mit 3 Schritten und wachsender Linie (Schritt 3 „Behandlung & Nachsorge“ ist neu – bei Bedarf entfernen).
 - Unsplash-Stockfotos durch eigene Praxisfotos ersetzt.
 - SEO: H1 mit „Keramikimplantate Balingen“, Meta/OG, Schema.org `Dentist` + `FAQPage`, Sitemap, `termin.html` auf noindex, Bilder lazy mit Alt-Texten, Videos als Facade.
+
+
+## Automatisches Weiterschalten (Stand 18.09.2026)
+
+Im ersten Schritt (Themenauswahl) geht es 1,6 Sekunden nach der letzten Auswahl automatisch
+weiter; ein weiterer Klick startet den Zähler neu, der Weiter-Button bleibt. Hinweistext mit
+kleinem Kreis erscheint unter der Auswahl (`#autoHint`, CSS `.auto-hint`). Nach jeder Änderung
+an Formular-Seiten die Versionskennung `?v=` an CSS/JS hochzählen (jetzt 20260918).

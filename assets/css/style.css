@@ -1008,3 +1008,9 @@ p:last-child { margin-bottom: 0; }
    der Browser bricht dann den Punkt in eine eigene Zeile. Deshalb hier eine
    eigene, kleinere Staffelung statt der allgemeinen H2-Größe. */
 .pbento__text h2 { font-size: clamp(1.35rem, 5vw, 2.4rem); }
+
+/* Hinweis unter der Mehrfachauswahl (automatisches Weiterschalten) */
+.auto-hint { display: none; margin: -14px 0 16px; font-size: .85rem; color: var(--green-80, #4d5c54); }
+.auto-hint.is-visible { display: flex; align-items: center; gap: 8px; animation: fadeUp .35s ease; }
+.auto-hint::before { content: ''; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--lime, #97C445); border-top-color: transparent; animation: autoSpin .9s linear infinite; flex: none; }
+@keyframes autoSpin { to { transform: rotate(360deg); } }

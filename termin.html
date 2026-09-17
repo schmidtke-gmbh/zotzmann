@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@300;400;500&display=swap">
-  <link rel="stylesheet" href="assets/css/style.css?v=20260917">
+  <link rel="stylesheet" href="assets/css/style.css?v=20260918">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <!-- Google Tag Manager (GTM-WTXPJ58) – erst nach Cookie-Consent aktivieren, siehe README -->
 
@@ -56,7 +56,7 @@
       <!-- Schritt 1: Interesse (Mehrfachauswahl) -->
       <section class="fstep is-active" data-step="1">
         <h2>Woran sind Sie am meisten interessiert?</h2>
-        <p class="hint">Wählen Sie so viel, wie Sie möchten.</p>
+        <p class="hint">Wählen Sie ein oder mehrere Themen – danach geht es automatisch weiter.</p>
         <div class="choice-list" id="choices">
           <label class="choice"><input type="checkbox" value="Keramik-Implantate"><span class="choice__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>Keramik-Implantate</label>
           <label class="choice"><input type="checkbox" value="Störfeldsanierung"><span class="choice__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>Störfeldsanierung</label>
@@ -64,6 +64,7 @@
           <label class="choice"><input type="checkbox" value="Komplettsanierung"><span class="choice__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>Komplettsanierung</label>
           <label class="choice"><input type="checkbox" value="Entfernung von Titan-Implantaten"><span class="choice__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>Entfernung von Titan-Implantaten</label>
         </div>
+        <p class="auto-hint" id="autoHint" aria-live="polite">Auswahl gespeichert – es geht gleich automatisch weiter. Sie können noch weitere Themen anklicken.</p>
         <p class="field__error" id="choiceError" style="display:none;margin:-14px 0 16px">Bitte wählen Sie mindestens ein Thema aus.</p>
         <div class="funnel__nav"><span></span><button type="button" class="btn btn--dark" data-next>Weiter zum nächsten Schritt</button></div>
       </section>
@@ -247,11 +248,21 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
   };
 
   /* Schritt 1: Mehrfachauswahl */
+  let autoWeiter = null;
   const choices = document.querySelectorAll('#choices .choice');
   choices.forEach((c) => {
     const input = c.querySelector('input');
     const sync = () => c.classList.toggle('is-checked', input.checked);
-    input.addEventListener('change', () => { sync(); document.getElementById('choiceError').style.display = 'none'; });
+    input.addEventListener('change', () => {
+      sync(); document.getElementById('choiceError').style.display = 'none';
+      /* Automatisch weiter: 1,6 s nach der letzten Auswahl – wer mehrere Themen
+         wählt, klickt einfach weiter, der Zähler startet dann neu. */
+      clearTimeout(autoWeiter);
+      const anzahl = document.querySelectorAll('#choices input:checked').length;
+      const hint = document.getElementById('autoHint');
+      if (hint) hint.classList.toggle('is-visible', anzahl > 0);
+      if (anzahl > 0 && current === 1) autoWeiter = setTimeout(() => { if (current === 1 && validate(1)) show(2); }, 1600);
+    });
     sync();
   });
 
@@ -285,7 +296,7 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
     return ok;
   };
 
-  document.querySelectorAll('[data-next]').forEach((b) => b.addEventListener('click', () => { if (validate(current)) show(current + 1); }));
+  document.querySelectorAll('[data-next]').forEach((b) => b.addEventListener('click', () => { clearTimeout(autoWeiter); if (validate(current)) show(current + 1); }));
   document.querySelectorAll('[data-back]').forEach((b) => b.addEventListener('click', () => show(Math.max(1, current - 1))));
   form.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && current < 6) { e.preventDefault(); if (validate(current)) show(current + 1); }
