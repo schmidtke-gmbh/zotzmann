@@ -458,35 +458,68 @@
 <!-- ================= PRAXIS ================= -->
 <section class="section section--green" id="praxis">
   <div class="container">
-    <div class="grid grid--2">
-      <div class="reveal">
-        <p class="eyebrow">Warum gerade diese Zahnarztpraxis?</p>
-        <h2>Mehr als eine Zahnarztpraxis.</h2>
-        <p class="lead">Zahnarzt Zotzmann in Balingen – <strong>moderne Zahnheilkunde trifft ganzheitliche Medizin.</strong></p>
-        <p>Ihre Experten für Implantologie, Zahnheilkunde und Prophylaxe. Wir verbinden moderne Zahnmedizin mit natürlichen Verfahren – für schöne Zähne und nachhaltige Gesundheit. Unsere Praxis liegt im Herzen von Balingen im Zollernalbkreis und ist gut erreichbar aus Albstadt, Hechingen, Bisingen und Umgebung.</p>
-        <div class="stats" style="margin-top:28px">
-          <div class="stat"><b data-count="3">3</b><span>Behandelnde<br>Zahnärzte</span><i aria-hidden="true">01</i></div>
-          <div class="stat"><b data-count="16">16</b><span>Mitarbeiter<br>in der Praxis</span><i aria-hidden="true">02</i></div>
-          <div class="stat"><b data-count="400" data-suffix="+">400+</b><span>Implantate<br>pro Jahr</span><i aria-hidden="true">03</i></div>
-          <div class="stat"><b data-count="10" data-suffix="+">10+</b><span>Jahre<br>Erfahrung</span><i aria-hidden="true">04</i></div>
+
+    <!-- Bento-Raster: Text, Video, Zahlen und Einblicke in einem Block.
+         Kachelgrößen über grid-template-areas in style.css (.pbento). -->
+    <div class="pbento reveal">
+
+      <div class="pbento__text">
+        <svg class="pbento__deko" viewBox="0 0 300 300" aria-hidden="true">
+          <circle cx="150" cy="150" r="46"/><circle cx="150" cy="150" r="82"/>
+          <circle cx="150" cy="150" r="118"/><circle cx="150" cy="150" r="149"/>
+        </svg>
+        <div>
+          <p class="eyebrow">Warum gerade diese Zahnarztpraxis?</p>
+          <h2>Mehr als eine Zahnarztpraxis.</h2>
+          <p class="lead">Zahnarzt Zotzmann in Balingen – <strong>moderne Zahnheilkunde trifft ganzheitliche Medizin.</strong></p>
+          <p>Ihre Experten für Implantologie, Zahnheilkunde und Prophylaxe. Wir verbinden moderne Zahnmedizin mit natürlichen Verfahren – für schöne Zähne und nachhaltige Gesundheit. Unsere Praxis liegt im Herzen von Balingen im Zollernalbkreis und ist gut erreichbar aus Albstadt, Hechingen, Bisingen und Umgebung.</p>
         </div>
       </div>
-      <div class="reveal" data-delay="1">
+
+      <div class="pbento__video">
         <div class="yt" data-yt="9F7R_36A_Z0" role="button" tabindex="0" aria-label="Praxisvideo abspielen">
           <img src="assets/img/praxis-team-1.webp" alt="Die drei behandelnden Zahnärzte der Praxis Zotzmann in Balingen" loading="lazy" width="800" height="534">
           <div class="yt__play"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></div>
           <span class="yt__hint">Praxisvideo · Klick lädt YouTube</span>
         </div>
       </div>
-    </div>
 
+      <!-- Die stärkste Zahl bekommt eine eigene Kachel in Lindgrün -->
+      <div class="pbento__zahl">
+        <span class="kachel-label">Erfahrung in Zahlen</span>
+        <div>
+          <b data-count="400" data-suffix="+">400+</b>
+          <span class="kachel-text">Implantate pro Jahr</span>
+        </div>
+        <div class="pbento__bar" aria-hidden="true"><i></i></div>
+      </div>
 
-    <!-- Bento-Grid: Einblicke in die Praxis -->
-    <div class="bento reveal" style="margin-top:clamp(28px,4vw,48px)">
-      <figure class="bento__item bento__item--big"><img src="assets/img/og-image.webp" alt="Zahnarzt Christian Zotzmann im Behandlungszimmer" loading="lazy" width="1200" height="800"><figcaption>Christian Zotzmann · Inhaber</figcaption></figure>
-      <figure class="bento__item"><img src="assets/img/schritt-2-beratung.webp" alt="Beratung mit 3D-Röntgen in der Praxis Zotzmann" loading="lazy" width="507" height="330"><figcaption>3D-Diagnostik</figcaption></figure>
-      <figure class="bento__item"><img src="assets/img/labor.webp" alt="Zahntechniker im praxiseigenen Dentallabor" loading="lazy" width="700" height="637"><figcaption>Eigenes Labor</figcaption></figure>
-      <figure class="bento__item bento__item--wide"><img src="assets/img/praxis-team-2.webp" alt="Praxisräume von Zahnarzt Zotzmann in Balingen mit Mooswand" loading="lazy" width="800" height="533"><figcaption>Praxis im Eyachzentrum Balingen</figcaption></figure>
+      <figure class="pbento__foto">
+        <img src="assets/img/praxis-team-2.webp" alt="Praxisräume von Zahnarzt Zotzmann in Balingen mit Mooswand" loading="lazy" width="800" height="533">
+        <figcaption>Praxis im Eyachzentrum Balingen</figcaption>
+      </figure>
+
+      <div class="pbento__stats">
+        <div><b data-count="3">3</b><span>Behandelnde Zahnärzte</span><i aria-hidden="true">01</i></div>
+        <div><b data-count="16">16</b><span>Mitarbeiter in der Praxis</span><i aria-hidden="true">02</i></div>
+        <div><b data-count="10" data-suffix="+">10+</b><span>Jahre Erfahrung</span><i aria-hidden="true">03</i></div>
+      </div>
+
+      <figure class="pbento__labor">
+        <img src="assets/img/labor.webp" alt="Zahntechniker im praxiseigenen Dentallabor der Praxis Zotzmann" loading="lazy" width="700" height="637">
+        <figcaption>Eigenes Dentallabor im Haus</figcaption>
+      </figure>
+
+      <a class="pbento__cta" href="termin.html">
+        <div>
+          <h3>Praxis persönlich kennenlernen</h3>
+          <p>Kostenloses 15-Minuten-Telefonat mit unserem Team.</p>
+        </div>
+        <span class="pbento__pfeil" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+
     </div>
 
     <div style="margin-top:clamp(48px,6vw,80px)">

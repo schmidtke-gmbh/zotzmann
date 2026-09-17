@@ -49,6 +49,9 @@
       <p class="sr-only" aria-hidden="true"><label>Bitte leer lassen: <input name="bot-field"></label></p>
       <input type="hidden" name="interesse" id="interesseField">
       <input type="hidden" name="quelle_url" id="quelleUrl">
+      <input type="hidden" name="status">
+      <input type="hidden" name="termin_gebucht_am">
+      <input type="hidden" name="calendly_termin">
 
       <!-- Schritt 1: Interesse (Mehrfachauswahl) -->
       <section class="fstep is-active" data-step="1">
@@ -125,7 +128,7 @@
     <section class="fstep" data-step="7" id="stepCalendly">
       <div class="alert-book" id="alertBook">
         <span class="alert-book__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v5M12 17.5h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>
-        <span class="alert-book__text"><b id="greetName">Bitte buchen Sie jetzt Ihren Termin</b>Ohne festen Telefontermin können wir Sie <u>nicht</u> zurückrufen. Wählen Sie unten einfach Tag und Uhrzeit – <strong id="phoneEcho">Ihre Nummer haben wir schon</strong>.</span>
+        <span class="alert-book__text"><b id="greetName">Fast geschafft – jetzt noch den Termin wählen</b>Ihre Anfrage geht <u>erst mit dem Termin</u> bei uns ein. Wählen Sie unten Tag und Uhrzeit – <strong id="phoneEcho">Ihre Nummer haben wir schon</strong>.</span>
       </div>
       <div class="calendly-wrap" id="calendlyWrap">
         <div class="calendly-inline-widget" id="calendlyWidget" data-auto-load="false"></div>
@@ -133,14 +136,14 @@
       </div>
       <div class="booked" id="booked">
         <div class="final-banner__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></div>
-        <h2>Geschafft – Ihr Telefontermin ist gebucht!</h2>
-        <p class="hint">Jetzt ist Ihre Anfrage vollständig. Sie erhalten eine Bestätigung per E-Mail, und wir rufen Sie zum gewählten Termin an.</p>
+        <h2>Anfrage eingegangen – Ihr Termin steht!</h2>
+        <p class="hint">Damit ist Ihre Anfrage bei uns angekommen. Sie erhalten eine Bestätigung per E-Mail, und wir rufen Sie zum gewählten Termin an.</p>
         <p class="hint" id="redirectNote" hidden>Sie werden gleich weitergeleitet …</p>
         <a class="btn btn--outline" href="https://www.zahnarzt-zotzmann.de/">Zur Praxis-Website</a>
       </div>
       <div class="final-alt">
         <b>Kein passender Termin dabei oder keine Zeit zum Buchen?</b>
-        <span>Dann rufen Sie uns einfach direkt an – sonst können wir Ihre Anfrage nicht bearbeiten.</span>
+        <span>Dann rufen Sie uns direkt an – ohne Termin oder Anruf können wir Ihre Anfrage nicht bearbeiten.</span>
         <a class="btn btn--outline" href="tel:+4974335811">Jetzt anrufen: 07433 5811</a>
       </div>
     </section>
@@ -173,6 +176,13 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
 (function () {
   'use strict';
 
+  /* Zwei Netlify-Eingänge, damit kein Lead verloren geht und die Absprungquote sichtbar wird:
+       erstgespraech-daten      – sobald die Fragen beantwortet sind (Termin noch offen)
+       erstgespraech            – erst nach der bestätigten Terminbuchung
+     Differenz der beiden Listen = Leute, die den Termin nicht gebucht haben. */
+  const EINGANG_DATEN = 'erstgespraech-daten';
+  const EINGANG_LEAD  = 'erstgespraech';
+
   /* ---------- Testumgebung erkennen ----------
      Netlify Forms gibt es nur auf der ausgelieferten Seite. Wird die Datei
      lokal geöffnet (Doppelklick = file://) oder über einen Entwicklungsserver
@@ -188,17 +198,21 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
   /* Sendet die Formulardaten. Erst an "/", wie Netlify es empfiehlt;
      scheitert das mit einem HTTP-Fehler, noch einmal an den Seitenpfad –
      manche Setups nehmen die Anfrage nur dort an. */
-  /* Sendet die Daten an Netlify. Drei Ziele nacheinander, weil je nach
-     Site-Konfiguration ein anderes greift: Wurzel, eigener Seitenpfad,
-     dann das action-Ziel des Formulars. */
-  async function uebermitteln(daten) {
-    const opt = { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: daten.toString() };
+  /* Sendet einen Datensatz an einen bestimmten Netlify-Eingang.
+     `eingang` überschreibt das Feld form-name – so landen dieselben Daten
+     je nach Stand des Funnels in der einen oder der anderen Liste.
+     Drei Ziele nacheinander, weil je nach Site-Konfiguration ein anderes greift. */
+  async function uebermitteln(daten, eingang, status) {
+    const kopie = new URLSearchParams(daten.toString());
+    if (eingang) kopie.set('form-name', eingang);
+    if (status) kopie.set('status', status);
+    const opt = { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: kopie.toString() };
     const ziele = ['/', location.pathname, form.getAttribute('action') || '/'];
     let letzter = '';
     for (const ziel of ziele) {
       try {
         const res = await fetch(ziel, opt);
-        if (res.ok) return { ok: true, ziel: ziel };
+        if (res.ok) return { ok: true };
         letzter = 'HTTP ' + res.status + ' bei ' + ziel;
       } catch (ex) {
         letzter = (ex && ex.message ? ex.message : 'Netzwerkfehler') + ' bei ' + ziel;
@@ -206,6 +220,10 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
     }
     return { ok: false, grund: letzter };
   }
+
+  /* Die Formulardaten werden zweimal gebraucht: einmal beim Abschluss der
+     Fragen, einmal nach der Terminbuchung. Deshalb hier festhalten. */
+  let formularDaten = null;
 
   const form = document.getElementById('funnelForm');
   const stepsEls = Array.from(document.querySelectorAll('.fstep'));
@@ -280,21 +298,20 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
     const btn = document.getElementById('submitBtn');
     const err = document.getElementById('submitError');
     err.style.display = 'none';
-    btn.disabled = true; btn.textContent = 'Wird übermittelt …';
+    btn.disabled = true; btn.textContent = 'Einen Moment …';
     const data = new URLSearchParams(new FormData(form));
-    const ergebnis = await uebermitteln(data);
+    formularDaten = data;
+    const ergebnis = await uebermitteln(data, EINGANG_DATEN, 'ohne_termin');
     window.dataLayer = window.dataLayer || [];
     if (!ergebnis.ok) {
-      /* Bewusst NICHT abbrechen: Der Termin im Kalender ist das Ziel, und
-         Calendly erfasst Name, E-Mail und Telefonnummer ohnehin selbst.
-         Den Nutzer hier zu blockieren würde die Buchung kosten – der Fehler
-         gehört ins Log und in den dataLayer, nicht vor den Patienten. */
-      console.error('[Funnel] Netlify-Übermittlung fehlgeschlagen:', ergebnis.grund,
-        istTestumgebung ? '(Testumgebung – auf der veröffentlichten Seite prüfen)'
-                        : '(LIVE! In Netlify prüfen: Site configuration → Forms → Form detection aktiviert? Deploy mit dem Formular durch?)');
+      /* Bewusst NICHT abbrechen: Der Termin ist das Ziel, und Calendly erfasst
+         Name, E-Mail und Telefonnummer ohnehin selbst. Ein Abbruch hier würde
+         die Buchung kosten – der Fehler gehört ins Log, nicht vor den Patienten. */
+      console.error('[Funnel] Übermittlung an "' + EINGANG_DATEN + '" fehlgeschlagen:', ergebnis.grund,
+        istTestumgebung ? '(Testumgebung)' : '(LIVE! Netlify → Forms → Form detection aktiviert und neu deployt?)');
       window.dataLayer.push({ event: 'lead_submit_failed', funnel: 'erstgespraech', grund: ergebnis.grund });
     } else {
-      window.dataLayer.push({ event: 'lead_submitted', funnel: 'erstgespraech', interesse: document.getElementById('interesseField').value });
+      window.dataLayer.push({ event: 'lead_daten_erfasst', funnel: 'erstgespraech', interesse: document.getElementById('interesseField').value });
     }
     showCalendly();
   });
@@ -304,7 +321,7 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
     const nachname = document.getElementById('nachname').value.trim();
     const email = document.getElementById('email').value.trim();
     const tel = document.getElementById('telefon').value.trim();
-    document.getElementById('greetName').textContent = vorname ? vorname + ', bitte buchen Sie jetzt Ihren Termin' : 'Bitte buchen Sie jetzt Ihren Termin';
+    document.getElementById('greetName').textContent = vorname ? vorname + ', fast geschafft – jetzt noch den Termin wählen' : 'Fast geschafft – jetzt noch den Termin wählen';
     document.getElementById('phoneEcho').textContent = tel ? 'wir rufen Sie unter ' + tel + ' an' : 'Ihre Nummer haben wir schon';
     show(7);
 
@@ -332,6 +349,17 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
       document.getElementById('booked').classList.add('is-visible');
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ event: 'call_booked' });
+      /* Zweiter Eingang: erst JETZT gilt die Anfrage als vollständig.
+         Die Differenz zwischen beiden Netlify-Listen ist die Absprungquote. */
+      if (formularDaten) {
+        const termin = (e.data.payload && e.data.payload.event && e.data.payload.event.uri) || '';
+        const kopie = new URLSearchParams(formularDaten.toString());
+        kopie.set('termin_gebucht_am', new Date().toLocaleString('de-DE'));
+        kopie.set('calendly_termin', termin);
+        uebermitteln(kopie, EINGANG_LEAD, 'termin_gebucht').then((r) => {
+          if (!r.ok) console.error('[Funnel] Übermittlung an "' + EINGANG_LEAD + '" fehlgeschlagen:', r.grund);
+        });
+      }
       // Weiterleitung auf die Danke-Seite der Hauptdomain (Conversion-Tracking Vibetrack)
       if (DANKE_URL) {
         const note = document.getElementById('redirectNote');
@@ -348,5 +376,29 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
 
 <!-- Vibetrack Cookie-Skript -->
 <script async src="https://app.vibetrack.com/cookie.js?site-id=VT-2D5F635B-48367"></script>
+
+<!-- =====================================================================
+     Zweiter Netlify-Eingang: "erstgespraech-daten"
+     Netlify erkennt Formulare nur beim Auslesen der statischen HTML.
+     Dieses Formular wird nie angezeigt und nie von Hand abgeschickt – es
+     existiert allein, damit der Eingang angelegt wird. Gesendet wird per
+     fetch mit überschriebenem form-name.
+     ===================================================================== -->
+<form name="erstgespraech-daten" data-netlify="true" netlify-honeypot="bot-field" hidden aria-hidden="true">
+  <input type="hidden" name="form-name" value="erstgespraech-daten">
+  <input name="bot-field">
+    <input name="interesse">
+    <input name="quelle_url">
+    <input name="vorname">
+    <input name="nachname">
+    <input name="telefon">
+    <input name="email">
+    <input name="datenschutz">
+    <input name="erreichbarkeit">
+    <input name="quelle">
+    <input name="status">
+    <input name="termin_gebucht_am">
+    <input name="calendly_termin">
+</form>
 </body>
 </html>

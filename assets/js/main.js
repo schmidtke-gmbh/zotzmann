@@ -147,7 +147,7 @@
   });
 
   /* ---------- Zahlen zählen beim Einscrollen hoch ---------- */
-  const counters = document.querySelectorAll('.stat b[data-count], .card__big [data-count]');
+  const counters = document.querySelectorAll('.stat b[data-count], .card__big [data-count], .pbento__stats b[data-count], .pbento__zahl b[data-count]');
   if (counters.length) {
     const run = (el) => {
       const target = parseInt(el.dataset.count, 10);
@@ -166,7 +166,7 @@
     const io4 = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         if (!e.isIntersecting) return;
-        const box = e.target.closest('.stat');
+        const box = e.target.closest('.stat, .pbento__zahl');
         if (box) box.classList.add('is-counted');
         run(e.target);
         io4.unobserve(e.target);
