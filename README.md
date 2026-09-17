@@ -98,6 +98,28 @@ Es wird ausgefüllt, während jemand anruft – deshalb bewusst anders gebaut:
 Erreichbar unter `/telefonische-anfrage` (der Vertipper `/telfonische-anfrage`
 funktioniert ebenfalls). Die Seite steht auf `noindex` und in der `robots.txt`.
 
+## ⚠️ Nach jeder CSS-Änderung: Versionskennung hochzählen
+
+In allen HTML-Dateien hängt an Stylesheet und Skript eine Kennung:
+
+```html
+<link rel="stylesheet" href="assets/css/style.css?v=20260917">
+<script src="assets/js/main.js?v=20260917" defer></script>
+```
+
+**Diese Zahl bei jeder Änderung an `style.css` oder `main.js` auf das aktuelle
+Datum setzen.** Sonst zeigt der Browser von Besuchern, die schon einmal da waren,
+weiter die alte Fassung – das Layout wirkt dann zerschossen, obwohl auf dem Server
+alles stimmt. In der Shell:
+
+```bash
+sed -i '' 's/?v=[0-9]\{8\}/?v=JJJJMMTT/g' *.html
+```
+
+Zusätzlich liefert `netlify.toml` CSS, JS und HTML jetzt mit
+`max-age=0, must-revalidate` aus; nur Bilder werden lange gecacht. Das war vorher
+für **alle** Assets auf ein Jahr `immutable` gesetzt – genau daher kam der Effekt.
+
 ## ⚠️ Netlify Forms muss einmal eingeschaltet werden
 
 **Netlify erkennt Formulare nicht von allein.** Die Formularerkennung ist bei neuen

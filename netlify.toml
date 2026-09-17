@@ -16,10 +16,31 @@
     X-Frame-Options = ""
     Content-Security-Policy = "frame-ancestors 'self' https://www.zahnarzt-zotzmann.de https://zahnarzt-zotzmann.de https://*.webflow.io"
 
+# Bilder, Schriften, Siegel: Dateinamen aendern sich praktisch nie -> lange cachen.
 [[headers]]
-  for = "/assets/*"
+  for = "/assets/img/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+# CSS und JS aendern sich bei jeder Ueberarbeitung. "immutable" wuerde
+# bedeuten, dass ein Besucher ein JAHR lang die alte Fassung behaelt und
+# das neue Layout nie zu sehen bekommt. Deshalb hier jedes Mal beim Server
+# nachfragen lassen - dank ETag bleibt das trotzdem schnell.
+[[headers]]
+  for = "/assets/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/assets/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# HTML nie festhalten, sonst laufen Seite und Stylesheet auseinander.
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # Alte OnePage-URLs (Google-Ads-Sitelinks) weiter bedienen – Rewrite mit 200, keine Weiterleitung
 [[redirects]]
