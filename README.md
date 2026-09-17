@@ -15,6 +15,7 @@ Statischer Nachbau von `info.implantat-zahnarzt-balingen.de` (bisher OnePage) in
 | `vergleichkeramikimplantate.html`, `faq.html`, `patientenerfahrungen.html`, `uber-den-zahnarzt.html` | Unterseiten für die Google-Ads-Sitelinks (Slugs wie bisher) |
 | `build-subpages.py` | Erzeugt die vier Unterseiten aus Bausteinen der `index.html` – nach Änderungen an Header/Footer/Sektionen einfach `python3 build-subpages.py` ausführen |
 | `praxis-anfrage.html` | Kontaktformular für die **Webflow-Seite** (Ersatz fürs Typeform), wird dort per iFrame eingebettet |
+| `telefonische-anfrage.html` | **Internes** Erfassungsformular fürs Praxisteam: Anrufe direkt im Gespräch aufnehmen. Eine Seite statt Schritt für Schritt, kein Kalender, kein Conversion-Tracking. Erreichbar unter `/telefonische-anfrage`, auf `noindex`. |
 | `WEBFLOW-EMBED.md` | Embed-Code + Anleitung für Webflow |
 | `netlify.toml`, `robots.txt`, `sitemap.xml` | Hosting & SEO |
 
@@ -64,7 +65,7 @@ Statischer Nachbau von `info.implantat-zahnarzt-balingen.de` (bisher OnePage) in
 | Calendly | `termin.html` (Schritt 7) | Terminbuchung, Inline-Widget mit Prefill |
 | Wistia | Startseite (Hero) | Praxisvideo |
 | YouTube (nocookie) | mehrere Seiten | lädt erst nach Klick |
-| Netlify Forms | `termin.html` (`erstgespraech`), `praxis-anfrage.html` (`praxis-anfrage`) | Lead-Empfang |
+| Netlify Forms | `termin.html` (`erstgespraech`), `praxis-anfrage.html` (`praxis-anfrage`), `telefonische-anfrage.html` (`telefonische-anfrage`) | Lead-Empfang |
 
 ### Zwei Funnels, ein Codestand
 
@@ -77,6 +78,25 @@ Statischer Nachbau von `info.implantat-zahnarzt-balingen.de` (bisher OnePage) in
 | Quellen-Auswahl | identisch: Google-Suche, ChatGPT/KI, Google Ads, Facebook, Instagram, YouTube, Empfehlung, Presse, Sonstiges | dito |
 | Abschluss | Calendly als Pflichtschritt | Calendly als Pflichtschritt |
 | Danach | Weiterleitung auf `/dankeseite` | Eltern-Fenster leitet auf `/dankeseite` |
+
+### Drittes Formular: telefonische Anfragen
+
+`telefonische-anfrage.html` ist kein Marketing-Funnel, sondern ein Werkzeug fürs Team.
+Es wird ausgefüllt, während jemand anruft – deshalb bewusst anders gebaut:
+
+* **Eine Seite** statt Schritt für Schritt, damit beim Telefonieren nichts klickt.
+* **Kein Calendly-Pflichtschritt** – der Termin wird im Gespräch vereinbart.
+* **Keine Weiterleitung auf `/dankeseite`**, sonst zählt Vibetrack interne Eingaben
+  als Conversion und die Zahlen stimmen nicht mehr.
+* Pflicht sind nur Vorname, Nachname und die Quelle. E-Mail und Telefon werden nur
+  geprüft, wenn sie ausgefüllt sind.
+* Nach dem Absenden erscheint eine Bestätigung mit dem Knopf „Nächste Anfrage erfassen“,
+  der alles zurücksetzt – doppeltes Absenden ist damit ausgeschlossen.
+* Leads laufen in Netlify unter dem eigenen Namen `telefonische-anfrage` auf,
+  getrennt von den beiden Funneln. **Benachrichtigung dort separat einrichten.**
+
+Erreichbar unter `/telefonische-anfrage` (der Vertipper `/telfonische-anfrage`
+funktioniert ebenfalls). Die Seite steht auf `noindex` und in der `robots.txt`.
 
 ## Funnel-Logik
 

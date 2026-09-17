@@ -46,3 +46,12 @@
   from = "/praxis-anfrage"
   to = "/praxis-anfrage.html"
   status = 200
+[[redirects]]
+  from = "/telefonische-anfrage"
+  to = "/telefonische-anfrage.html"
+  status = 200
+# haeufiger Vertipper, damit ein weitergegebener Link trotzdem ankommt
+[[redirects]]
+  from = "/telfonische-anfrage"
+  to = "/telefonische-anfrage.html"
+  status = 200

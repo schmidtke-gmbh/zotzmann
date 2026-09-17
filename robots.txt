@@ -3,4 +3,5 @@ Allow: /
 Disallow: /termin.html
 Disallow: /danke.html
 Disallow: /praxis-anfrage.html
+Disallow: /telefonische-anfrage.html
 Sitemap: https://info.implantat-zahnarzt-balingen.de/sitemap.xml

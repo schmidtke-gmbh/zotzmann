@@ -688,13 +688,19 @@ p:last-child { margin-bottom: 0; }
 .field--check input[type="checkbox"]:hover { border-color: var(--lime-dark); background: var(--lime-10); }
 .field--check input[type="checkbox"]:active { transform: scale(.92); }
 .field--check input[type="checkbox"]:focus-visible { outline: 3px solid var(--lime); outline-offset: 2px; }
-.field--check input[type="checkbox"]:checked {
+.field--check label { cursor: pointer; }
+/* Fehlerzustand: nur background-COLOR setzen – die Kurzform `background` würde
+   sonst das Haken-Bild der angehakten Box mit löschen. */
+.field--check.has-error input[type="checkbox"] { border-color: var(--red); background-color: rgba(200, 85, 61, .07); }
+/* „Angehakt“ steht bewusst zuletzt und schlägt damit auch den Fehlerzustand. */
+.field--check input[type="checkbox"]:checked,
+.field--check.has-error input[type="checkbox"]:checked {
   background-color: var(--lime); border-color: var(--lime);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5L20 7'/%3E%3C/svg%3E");
   background-size: 17px; background-position: center; background-repeat: no-repeat;
+  animation: checkPop .22s var(--ease);
 }
-.field--check label { cursor: pointer; }
-.field--check.has-error input[type="checkbox"] { border-color: var(--red); background: rgba(200, 85, 61, .07); }
+@keyframes checkPop { 0% { transform: scale(.8); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
 .field--check a { text-decoration: underline; }
 .funnel__nav { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 8px; }
 .funnel__back { color: var(--green-80); font-size: .9rem; display: inline-flex; align-items: center; gap: 6px; }
@@ -758,3 +764,36 @@ p:last-child { margin-bottom: 0; }
 .arrow-down { display: flex; justify-content: center; margin: 8px 0 14px; color: var(--lime-dark); animation: bounce 1.6s infinite; }
 .arrow-down svg { width: 28px; height: 28px; }
 @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+
+/* =====================================================================
+   INTERNES FORMULAR (telefonische-anfrage.html)
+   Einseitig, dicht gesetzt – wird beim Telefonieren ausgefüllt.
+   ===================================================================== */
+.form-head { text-align: center; margin-bottom: 26px; }
+.form-head h1 { font-size: clamp(1.6rem, 3.4vw, 2.2rem); text-transform: none; margin-bottom: 8px; }
+.form-head .hint { color: var(--green-80); font-size: .98rem; margin: 0; }
+
+/* Zwei Felder nebeneinander, auf dem Handy untereinander */
+.field-row { display: grid; gap: 0 18px; }
+@media (min-width: 560px) { .field-row { grid-template-columns: 1fr 1fr; } }
+
+.label-soft { font-family: var(--font-body); font-weight: 300; text-transform: none; letter-spacing: 0; color: var(--green-80); }
+
+/* Telefonfeld mit Länderkennzeichen davor.
+   Der Rahmen sitzt am Container, das Eingabefeld selbst ist rahmenlos –
+   sonst entstünde eine doppelte Linie zwischen Flagge und Eingabe. */
+.input-prefix { display: grid; grid-template-columns: 52px 1fr; align-items: center; border: var(--line); background: var(--cream); transition: border-color .2s; }
+.input-prefix:focus-within { border-color: var(--lime); }
+.input-prefix__flag { display: grid; place-items: center; border-right: var(--line-soft); align-self: stretch; }
+.input-prefix input { border: 0; background: transparent; }
+.input-prefix input:focus { outline: none; }
+.field.has-error .input-prefix { border-color: var(--red); }
+
+/* Datumsfeld: das native Kalendersymbol bleibt sichtbar, appearance:none
+   der globalen Feldregel würde es sonst verschlucken. */
+.field input[type="date"] { -webkit-appearance: none; appearance: none; min-height: 55px; }
+.field input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: .55; }
+.field input[type="date"]:hover::-webkit-calendar-picker-indicator { opacity: 1; }
+
+.form-mark { display: grid; place-items: center; margin-top: 30px; padding-top: 24px; border-top: var(--line-soft); opacity: .5; }
+.form-mark img { width: 150px; height: auto; }

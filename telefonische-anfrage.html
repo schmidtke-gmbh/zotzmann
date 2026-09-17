@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<!--
+  Telefonische Anfrage – internes Erfassungsformular
+  =====================================================================
+  Wird vom Praxisteam ausgefüllt, während oder direkt nach einem Anruf.
+  Deshalb bewusst ANDERS als termin.html:
+    · eine Seite statt Schritt für Schritt (schneller beim Telefonieren),
+    · kein Kalender-Pflichtschritt (der Termin wird am Telefon vereinbart),
+    · kein Tracking-Redirect (das ist kein Marketing-Lead),
+    · nur Vorname, Nachname und Quelle sind Pflicht.
+  Leads landen in Netlify unter dem eigenen Formularnamen
+  "telefonische-anfrage", getrennt von "erstgespraech" und "praxis-anfrage".
+-->
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Telefonische Anfrage erfassen | Zahnarzt Zotzmann</title>
+  <meta name="description" content="Internes Formular zur Erfassung telefonischer Patientenanfragen der Zahnarztpraxis Zotzmann in Balingen.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#20362A">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+</head>
+<body class="funnel-page">
+
+<header class="header">
+  <div class="container header__inner">
+    <a class="header__logo" href="index.html" aria-label="Zahnarzt Zotzmann – zur Startseite">
+      <img src="assets/img/logo.svg" alt="Zahnarzt Zotzmann – Zentrum für Biologische Zahnmedizin" width="230" height="49">
+    </a>
+    <a class="header__phone" href="tel:+4974335811">07433 5811</a>
+  </div>
+</header>
+
+<main class="funnel" id="main">
+  <div class="funnel__card">
+
+    <div class="form-head">
+      <p class="eyebrow eyebrow--center">Interne Erfassung</p>
+      <h1>Kontaktformular</h1>
+      <p class="hint">Trage hier bitte alle wichtigen Patienteninfos ein.</p>
+    </div>
+
+    <form name="telefonische-anfrage" method="POST" action="/danke.html"
+          data-netlify="true" netlify-honeypot="bot-field" id="telForm" novalidate>
+      <input type="hidden" name="form-name" value="telefonische-anfrage">
+      <p class="sr-only" aria-hidden="true"><label>Bitte leer lassen: <input name="bot-field"></label></p>
+      <input type="hidden" name="erfasst_am" id="erfasstAm">
+
+      <div class="field-row">
+        <div class="field">
+          <label for="vorname">Vorname *</label>
+          <input id="vorname" name="vorname" type="text" autocomplete="off" placeholder="z. B. Alex" required>
+          <span class="field__error">Bitte den Vornamen eintragen.</span>
+        </div>
+        <div class="field">
+          <label for="nachname">Nachname *</label>
+          <input id="nachname" name="nachname" type="text" autocomplete="off" placeholder="z. B. Weber" required>
+          <span class="field__error">Bitte den Nachnamen eintragen.</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="interesse">Interesse an</label>
+        <textarea id="interesse" name="interesse" rows="4" placeholder="Anliegen, Behandlungswunsch, Besonderheiten …"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="termindatum">Termindatum <span class="label-soft">(wenn möglich)</span></label>
+        <input id="termindatum" name="termindatum" type="date">
+      </div>
+
+      <div class="field">
+        <label for="email">E-Mail <span class="label-soft">(optional)</span></label>
+        <input id="email" name="email" type="email" inputmode="email" autocomplete="off" placeholder="beispiel@gmail.com">
+        <span class="field__error">Diese E-Mail-Adresse sieht nicht gültig aus.</span>
+      </div>
+
+      <div class="field">
+        <label for="telefon">Telefon</label>
+        <!-- Kein Länder-Auswahlfeld: am Telefon zählt Tempo, und die
+             Nummer wird ohnehin so notiert, wie sie angesagt wird. -->
+        <div class="input-prefix">
+          <span class="input-prefix__flag" aria-hidden="true">
+            <svg viewBox="0 0 20 14" width="20" height="14"><rect width="20" height="4.67" y="0" fill="#000"/><rect width="20" height="4.67" y="4.67" fill="#D00"/><rect width="20" height="4.66" y="9.34" fill="#FFCE00"/></svg>
+          </span>
+          <input id="telefon" name="telefon" type="tel" inputmode="tel" autocomplete="off" placeholder="Telefonnummer eingeben">
+        </div>
+        <span class="field__error">Diese Telefonnummer sieht zu kurz aus.</span>
+      </div>
+
+      <div class="field">
+        <label for="quelle">Wie ist die Person auf uns aufmerksam geworden? *</label>
+        <select id="quelle" name="quelle" required>
+          <option value="" disabled selected>Bitte auswählen</option>
+          <option>Google-Suche</option>
+          <option>ChatGPT oder eine andere KI</option>
+          <option>Google Ads / Anzeige</option>
+          <option>Facebook</option>
+          <option>Instagram</option>
+          <option>YouTube</option>
+          <option>Empfehlung von Patient oder Arzt</option>
+          <option>Presse / Artikel</option>
+          <option>Schon einmal in Behandlung</option>
+          <option>Sonstiges</option>
+        </select>
+        <span class="field__error">Bitte eine Quelle auswählen – diese Angabe ist wichtig.</span>
+      </div>
+
+      <div class="field">
+        <label for="notiz">Interne Notiz <span class="label-soft">(optional)</span></label>
+        <textarea id="notiz" name="notiz" rows="2" placeholder="Wer hat das Gespräch angenommen, Rückrufwunsch, …"></textarea>
+      </div>
+
+      <p class="field__error" id="submitError" style="display:none;margin-bottom:14px">Die Übermittlung hat nicht geklappt. Bitte noch einmal absenden.</p>
+
+      <button type="submit" class="btn btn--wide" id="submitBtn"><span class="btn__label">Angaben absenden</span></button>
+    </form>
+
+    <!-- Bestätigung: ersetzt das Formular, damit nicht versehentlich
+         zweimal abgeschickt wird. Der Knopf setzt alles für den
+         nächsten Anruf zurück. -->
+    <div class="booked" id="sent">
+      <div class="final-banner__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></div>
+      <h2>Gespeichert</h2>
+      <p class="hint" id="sentName">Die Anfrage ist erfasst.</p>
+      <button type="button" class="btn btn--outline" id="resetBtn">Nächste Anfrage erfassen</button>
+    </div>
+
+    <div class="form-mark" aria-hidden="true">
+      <img src="assets/img/logo.svg" alt="" width="160" height="34" loading="lazy">
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  const form = document.getElementById('telForm');
+  const sent = document.getElementById('sent');
+
+  // Fehlermarkierung sofort zurücknehmen, sobald jemand korrigiert
+  const clearError = (e) => {
+    const f = e.target.closest('.field');
+    if (f) { f.classList.remove('has-error'); e.target.classList.remove('is-invalid'); }
+  };
+  form.addEventListener('input', clearError);
+  form.addEventListener('change', clearError);
+
+  function validate() {
+    let ok = true, erstes = null;
+    form.querySelectorAll('input[required], select[required], textarea[required]').forEach((inp) => {
+      const valid = inp.value.trim().length > 0;
+      inp.closest('.field').classList.toggle('has-error', !valid);
+      inp.classList.toggle('is-invalid', !valid);
+      if (!valid) { ok = false; erstes = erstes || inp; }
+    });
+    // Optionale Felder nur prüfen, wenn sie ausgefüllt sind
+    const mail = document.getElementById('email');
+    if (mail.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail.value.trim())) {
+      mail.closest('.field').classList.add('has-error'); mail.classList.add('is-invalid');
+      ok = false; erstes = erstes || mail;
+    }
+    const tel = document.getElementById('telefon');
+    if (tel.value.trim() && tel.value.replace(/[^\d+]/g, '').length < 6) {
+      tel.closest('.field').classList.add('has-error'); tel.classList.add('is-invalid');
+      ok = false; erstes = erstes || tel;
+    }
+    if (erstes) erstes.focus();
+    return ok;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+    const btn = document.getElementById('submitBtn');
+    const err = document.getElementById('submitError');
+    err.style.display = 'none';
+    btn.disabled = true; btn.querySelector('.btn__label').textContent = 'Wird gespeichert …';
+
+    document.getElementById('erfasstAm').value = new Date().toLocaleString('de-DE');
+    const data = new URLSearchParams(new FormData(form));
+    try {
+      const res = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: data.toString() });
+      if (!res.ok && location.protocol !== 'file:' && location.hostname !== 'localhost') throw new Error('HTTP ' + res.status);
+    } catch (ex) {
+      // Lokal gibt es keinen Netlify-Endpunkt – dort trotzdem weitermachen,
+      // damit sich das Formular testen lässt.
+      if (location.protocol !== 'file:' && location.hostname !== 'localhost') {
+        err.style.display = 'block';
+        btn.disabled = false; btn.querySelector('.btn__label').textContent = 'Angaben absenden';
+        return;
+      }
+    }
+    const name = (document.getElementById('vorname').value.trim() + ' ' + document.getElementById('nachname').value.trim()).trim();
+    document.getElementById('sentName').textContent = name ? 'Die Anfrage von ' + name + ' ist erfasst.' : 'Die Anfrage ist erfasst.';
+    form.style.display = 'none';
+    sent.classList.add('is-visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    form.reset();
+    form.querySelectorAll('.field').forEach((f) => f.classList.remove('has-error'));
+    form.querySelectorAll('.is-invalid').forEach((i) => i.classList.remove('is-invalid'));
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = false; btn.querySelector('.btn__label').textContent = 'Angaben absenden';
+    sent.classList.remove('is-visible');
+    form.style.display = '';
+    document.getElementById('vorname').focus();
+  });
+})();
+</script>
+</body>
+</html>
