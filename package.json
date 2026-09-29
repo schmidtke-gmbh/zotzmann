@@ -1,0 +1,6 @@
+{
+  "name": "zotzmann-landingpage",
+  "private": true,
+  "scripts": { "test": "node --test" },
+  "engines": { "node": ">=20" }
+}
