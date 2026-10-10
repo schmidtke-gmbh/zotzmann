@@ -1014,3 +1014,15 @@ p:last-child { margin-bottom: 0; }
 .auto-hint.is-visible { display: flex; align-items: center; gap: 8px; animation: fadeUp .35s ease; }
 .auto-hint::before { content: ''; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--lime, #97C445); border-top-color: transparent; animation: autoSpin .9s linear infinite; flex: none; }
 @keyframes autoSpin { to { transform: rotate(360deg); } }
+
+/* Patientenstatus-Weiche und Bestandspatienten-Weg */
+.bstep { display: none; animation: fadeUp .45s var(--ease); }
+.bstep.is-active { display: block; }
+#statusChoices .choice { align-items: center; }
+#statusChoices .choice > span:last-child { display: flex; flex-direction: column; gap: 2px; }
+#statusChoices .choice b { font-family: var(--font-head); font-weight: 600; font-size: .95rem; }
+#statusChoices .choice small { font-size: .82rem; opacity: .8; }
+#bestand .final-alt { margin-bottom: 22px; }
+
+.bstep h2 { text-transform: none; font-size: clamp(1.35rem, 2.6vw, 1.8rem); margin-bottom: 6px; }
+.bstep .hint { color: var(--green-80); font-size: .95rem; margin-bottom: 22px; }

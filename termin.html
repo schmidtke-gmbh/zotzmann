@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@300;400;500&display=swap">
-  <link rel="stylesheet" href="assets/css/style.css?v=20260918">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261010">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <!-- Google Tag Manager (GTM-WTXPJ58) – erst nach Cookie-Consent aktivieren, siehe README -->
 
@@ -39,8 +39,8 @@
   <h1 class="sr-only">Kostenloses telefonisches Erstgespräch vereinbaren – Zahnarzt Zotzmann, Balingen</h1>
   <div class="funnel__card" id="funnelCard">
     <div class="funnel__progress" aria-hidden="true">
-      <i class="active"></i><i></i><i></i><i></i><i></i><i></i><i></i>
-      <span class="funnel__progress-text" id="progressText">Schritt 1 von 7</span>
+      <i class="active"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      <span class="funnel__progress-text" id="progressText">Schritt 1 von 8</span>
     </div>
 
     <!-- Netlify Forms: Feldnamen müssen im statischen HTML vorhanden sein -->
@@ -54,7 +54,19 @@
       <input type="hidden" name="calendly_termin">
 
       <!-- Schritt 1: Interesse (Mehrfachauswahl) -->
+            <!-- 1 – Patientenstatus: entscheidet über den weiteren Ablauf -->
       <section class="fstep is-active" data-step="1">
+        <h2>Waren Sie schon einmal bei uns in Behandlung?</h2>
+        <p class="hint">Einfach antippen – danach geht es automatisch weiter.</p>
+        <div class="choice-list" id="statusChoices">
+          <label class="choice"><input type="radio" name="patientenstatus" value="Neupatient"><span class="choice__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span><span><b>Nein, ich bin Neupatient</b><small>Kostenloses Erstgespräch am Telefon vereinbaren</small></span></label>
+          <label class="choice"><input type="radio" name="patientenstatus" value="Bestandspatient"><span class="choice__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span><span><b>Ja, ich bin bereits Patient</b><small>Termin, laufende Behandlung oder Rückfrage</small></span></label>
+        </div>
+        <p class="field__error" id="statusError" style="display:none;margin:-14px 0 16px">Bitte wählen Sie eine Antwort.</p>
+        <div class="funnel__nav"><span></span><button type="button" class="btn btn--dark" data-next>Weiter zum nächsten Schritt</button></div>
+      </section>
+
+      <section class="fstep" data-step="2">
         <h2>Woran sind Sie am meisten interessiert?</h2>
         <p class="hint">Wählen Sie ein oder mehrere Themen – danach geht es automatisch weiter.</p>
         <div class="choice-list" id="choices">
@@ -70,7 +82,7 @@
       </section>
 
       <!-- Schritt 2: Vorname -->
-      <section class="fstep" data-step="2">
+      <section class="fstep" data-step="3">
         <h2>Bitte geben Sie Ihren Vornamen ein</h2>
         <p class="hint">Damit wir Sie im Gespräch persönlich ansprechen können.</p>
         <div class="field"><label for="vorname">Vorname</label><input id="vorname" name="vorname" type="text" autocomplete="given-name" placeholder="Zum Beispiel Thomas" required><span class="field__error">Bitte geben Sie Ihren Vornamen ein.</span></div>
@@ -78,7 +90,7 @@
       </section>
 
       <!-- Schritt 3: Nachname -->
-      <section class="fstep" data-step="3">
+      <section class="fstep" data-step="4">
         <h2>Bitte geben Sie Ihren Nachnamen ein</h2>
         <p class="hint">&nbsp;</p>
         <div class="field"><label for="nachname">Nachname</label><input id="nachname" name="nachname" type="text" autocomplete="family-name" placeholder="Nachname hier …" required><span class="field__error">Bitte geben Sie Ihren Nachnamen ein.</span></div>
@@ -86,7 +98,7 @@
       </section>
 
       <!-- Schritt 4: Kontaktdaten -->
-      <section class="fstep" data-step="4">
+      <section class="fstep" data-step="5">
         <h2>Bitte teilen Sie uns Ihre Kontaktdaten mit</h2>
         <p class="hint">Unter dieser Nummer rufen wir Sie zum vereinbarten Termin an.</p>
         <div class="field"><label for="telefon">Telefonnummer *</label><input id="telefon" name="telefon" type="tel" inputmode="tel" autocomplete="tel" placeholder="z. B. 0170 1234567" required><span class="field__error">Bitte geben Sie eine gültige Telefonnummer ein.</span></div>
@@ -96,7 +108,7 @@
       </section>
 
       <!-- Schritt 5: Erreichbarkeit -->
-      <section class="fstep" data-step="5">
+      <section class="fstep" data-step="6">
         <h2>Wann sind Sie Mo–Fr am besten erreichbar?</h2>
         <p class="hint">Bitte geben Sie drei Zeitpunkte an. Beispiel: montags, 15 Uhr – Sie wählen im letzten Schritt zusätzlich einen festen Termin.</p>
         <div class="field"><label for="erreichbarkeit">Erreichbarkeit</label><input id="erreichbarkeit" name="erreichbarkeit" type="text" placeholder="Antwort hier …" required><span class="field__error">Bitte nennen Sie uns, wann wir Sie erreichen können.</span></div>
@@ -104,7 +116,7 @@
       </section>
 
       <!-- Schritt 6: Quelle + Absenden -->
-      <section class="fstep" data-step="6">
+      <section class="fstep" data-step="7">
         <h2>Wie sind Sie auf uns aufmerksam geworden?</h2>
         <p class="hint">Eine kurze Angabe genügt.</p>
         <div class="field"><label for="quelle">Bitte auswählen</label>
@@ -126,7 +138,7 @@
     </form>
 
     <!-- Schritt 7: Calendly – klarer Abschluss statt bloßer Dankeseite -->
-    <section class="fstep" data-step="7" id="stepCalendly">
+    <section class="fstep" data-step="8" id="stepCalendly">
       <div class="alert-book" id="alertBook">
         <span class="alert-book__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v5M12 17.5h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>
         <span class="alert-book__text"><b id="greetName">Fast geschafft – jetzt noch den Termin wählen</b>Ihre Anfrage geht <u>erst mit dem Termin</u> bei uns ein. Wählen Sie unten Tag und Uhrzeit – <strong id="phoneEcho">Ihre Nummer haben wir schon</strong>.</span>
@@ -148,6 +160,47 @@
         <a class="btn btn--outline" href="tel:+4974335811">Jetzt anrufen: 07433 5811</a>
       </div>
     </section>
+
+
+    <!-- Kurzer Weg für Bestandspatienten: kein Calendly, die Praxis ruft zurück -->
+    <div id="bestand" hidden>
+      <div class="funnel__progress bprogress" aria-hidden="true"><i class="done"></i><i class="active" id="bProg2"></i><i id="bProg3"></i><span class="funnel__progress-text" id="bProgressText">Schritt 2 von 3</span></div>
+      <form name="bestandspatient" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="bestandForm" novalidate>
+        <input type="hidden" name="form-name" value="bestandspatient">
+        <p class="sr-only" aria-hidden="true"><label>Bitte leer lassen: <input name="bot-field"></label></p>
+        <input type="hidden" name="patientenstatus" value="Bestandspatient">
+        <input type="hidden" name="quelle_url" id="bQuelleUrl">
+        <section class="bstep is-active" data-bstep="1">
+          <h2>Schön, dass Sie wieder da sind – worum geht es?</h2>
+          <p class="hint">Einfach antippen – danach geht es automatisch weiter.</p>
+          <div class="choice-list choice-list--compact" id="anliegenChoices"><label class="choice"><input type="radio" name="anliegen" value="Kontrolle / Prophylaxe"><span class="choice__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>Kontrolle / Prophylaxe</label><label class="choice"><input type="radio" name="anliegen" value="Laufende Behandlung fortsetzen"><span class="choice__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>Laufende Behandlung fortsetzen</label><label class="choice"><input type="radio" name="anliegen" value="Neues Anliegen oder Beschwerden"><span class="choice__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>Neues Anliegen oder Beschwerden</label><label class="choice"><input type="radio" name="anliegen" value="Rückfrage zu Rechnung oder Unterlagen"><span class="choice__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span>Rückfrage zu Rechnung oder Unterlagen</label></div>
+          <p class="field__error" id="anliegenError" style="display:none;margin:-14px 0 16px">Bitte wählen Sie ein Anliegen.</p>
+          <p class="final-alt" style="margin-top:4px"><b>Akute Schmerzen?</b><span>Dann rufen Sie bitte direkt an – so sind Sie am schnellsten dran.</span><a class="btn btn--outline" href="tel:+4974335811">Jetzt anrufen: 07433 5811</a></p>
+          <div class="funnel__nav"><button type="button" class="funnel__back" data-bback><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Zurück</button><button type="button" class="btn btn--dark" data-bnext>Weiter</button></div>
+        </section>
+        <section class="bstep" data-bstep="2">
+          <h2>Wie erreichen wir Sie am besten?</h2>
+          <p class="hint">Wir rufen Sie innerhalb eines Werktags zurück – kein Online-Termin nötig.</p>
+          <div class="field-row field-row--2">
+            <div class="field"><label for="bVorname">Vorname *</label><input id="bVorname" name="vorname" type="text" autocomplete="given-name" required><span class="field__error">Bitte geben Sie Ihren Vornamen ein.</span></div>
+            <div class="field"><label for="bNachname">Nachname *</label><input id="bNachname" name="nachname" type="text" autocomplete="family-name" required><span class="field__error">Bitte geben Sie Ihren Nachnamen ein.</span></div>
+          </div>
+          <div class="field"><label for="bTelefon">Telefonnummer *</label><input id="bTelefon" name="telefon" type="tel" inputmode="tel" autocomplete="tel" placeholder="z. B. 0170 1234567" required><span class="field__error">Bitte geben Sie eine gültige Telefonnummer ein.</span></div>
+          <div class="field"><label for="bErreichbarkeit">Wann erreichen wir Sie am besten? (optional)</label><input id="bErreichbarkeit" name="erreichbarkeit" type="text" placeholder="z. B. vormittags oder ab 16 Uhr"></div>
+          <div class="field"><label for="bNachricht">Kurze Nachricht (optional)</label><textarea id="bNachricht" name="nachricht" rows="2" placeholder="Zum Beispiel: Zahn 26 ist empfindlich, Termin bei Frau …"></textarea></div>
+          <div class="field field--check"><input id="bDatenschutz" name="datenschutz" type="checkbox" value="akzeptiert" required><label for="bDatenschutz" style="font-family:var(--font-body);font-weight:300;letter-spacing:0">Ja, ich bestätige die <a href="/datenschutz" target="_blank" rel="noopener">Datenschutzerklärung</a> und möchte zurückgerufen werden. *</label><span class="field__error" style="grid-column:1/-1">Bitte bestätigen Sie die Datenschutzerklärung.</span></div>
+          <p class="field__error" id="bSubmitError" style="display:none;margin-bottom:14px">Das Senden hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie an: <a href="tel:+4974335811">07433 5811</a></p>
+          <div class="funnel__nav"><button type="button" class="funnel__back" data-bback><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Zurück</button><button type="submit" class="btn" id="bSubmitBtn">Rückruf anfordern</button></div>
+        </section>
+      </form>
+      <section class="bstep" data-bstep="3">
+        <div class="booked is-visible">
+          <div class="final-banner__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></div>
+          <h2 id="bDankeTitel">Danke – wir rufen Sie zurück!</h2>
+          <p class="hint">Ihre Nachricht ist bei uns angekommen. Wir melden uns innerhalb eines Werktags. Wenn es eilig ist: <a href="tel:+4974335811">07433 5811</a></p>
+        </div>
+      </section>
+    </div>
 
     <div class="funnel__trust">
       <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>Kostenlos &amp; unverbindlich</span>
@@ -228,7 +281,7 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
 
   const form = document.getElementById('funnelForm');
   const stepsEls = Array.from(document.querySelectorAll('.fstep'));
-  const bars = Array.from(document.querySelectorAll('.funnel__progress i'));
+  const bars = Array.from(document.querySelectorAll('.funnel__progress:not(.bprogress) i'));
   const progressText = document.getElementById('progressText');
   const total = stepsEls.length;
   let current = 1;
@@ -261,7 +314,7 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
       const anzahl = document.querySelectorAll('#choices input:checked').length;
       const hint = document.getElementById('autoHint');
       if (hint) hint.classList.toggle('is-visible', anzahl > 0);
-      if (anzahl > 0 && current === 1) autoWeiter = setTimeout(() => { if (current === 1 && validate(1)) show(2); }, 1600);
+      if (anzahl > 0 && current === 2) autoWeiter = setTimeout(() => { if (current === 2 && validate(2)) show(3); }, 1600);
     });
     sync();
   });
@@ -278,7 +331,8 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
   const validate = (n) => {
     const step = stepsEls[n - 1];
     let ok = true;
-    if (n === 1) {
+    if (n === 1) return statusOk();
+    if (n === 2) {
       const sel = Array.from(document.querySelectorAll('#choices input:checked')).map((i) => i.value);
       document.getElementById('interesseField').value = sel.join(', ');
       if (!sel.length) { document.getElementById('choiceError').style.display = 'block'; return false; }
@@ -296,16 +350,109 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
     return ok;
   };
 
+
+  /* ---------- Schritt 1: Neupatient oder Bestandspatient ---------- */
+  const bestand = document.getElementById('bestand');
+  const progressBox = document.querySelector('.funnel__progress:not(.bprogress)');
+  const zeigeBestand = (an) => {
+    form.hidden = an;
+    if (progressBox) progressBox.style.display = an ? 'none' : '';
+    document.querySelectorAll('.fstep[id]').forEach((s) => { if (an) s.classList.remove('is-active'); });
+    bestand.hidden = !an;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  document.querySelectorAll('#statusChoices .choice').forEach((c) => {
+    const input = c.querySelector('input');
+    input.addEventListener('change', () => {
+      document.querySelectorAll('#statusChoices .choice').forEach((x) => x.classList.toggle('is-checked', x.querySelector('input').checked));
+      document.getElementById('statusError').style.display = 'none';
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'patientenstatus', patientenstatus: input.value === 'Neupatient' ? 'neu' : 'bestand' });
+      setTimeout(() => {
+        if (!input.checked) return;
+        if (input.value === 'Bestandspatient') zeigeBestand(true); else show(2);
+      }, 450);
+    });
+  });
+  const statusOk = () => {
+    const ok = !!form.querySelector('input[name=patientenstatus]:checked');
+    document.getElementById('statusError').style.display = ok ? 'none' : 'block';
+    return ok;
+  };
+  document.querySelectorAll('[data-bback]').forEach((b) => b.addEventListener('click', () => {
+    const aktiv = document.querySelector('.bstep.is-active');
+    const n = Number(aktiv.dataset.bstep);
+    if (n > 1) bZeige(n - 1); else { zeigeBestand(false); form.querySelectorAll('input[name=patientenstatus]').forEach((i) => { i.checked = false; }); document.querySelectorAll('#statusChoices .choice').forEach((x) => x.classList.remove('is-checked')); show(1); }
+  }));
+
+  /* ---------- Bestandspatienten-Formular ---------- */
+  const bForm = document.getElementById('bestandForm');
+  const bSteps = Array.from(document.querySelectorAll('.bstep'));
+  document.getElementById('bQuelleUrl').value = document.referrer || location.href;
+  const bZeige = (n) => {
+    bSteps.forEach((s) => s.classList.toggle('is-active', Number(s.dataset.bstep) === n));
+    document.getElementById('bProg2').className = n >= 2 ? (n === 2 ? 'active' : 'done') : 'active';
+    document.getElementById('bProg3').className = n === 3 ? 'active' : '';
+    document.getElementById('bProgressText').textContent = n === 3 ? 'Fertig' : 'Schritt ' + (n + 1) + ' von 3';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: 'funnel_step', step: 'bestand-' + n, funnel: 'bestandspatient' });
+  };
+  document.querySelectorAll('#anliegenChoices .choice').forEach((c) => {
+    const input = c.querySelector('input');
+    input.addEventListener('change', () => {
+      document.querySelectorAll('#anliegenChoices .choice').forEach((x) => x.classList.toggle('is-checked', x.querySelector('input').checked));
+      document.getElementById('anliegenError').style.display = 'none';
+      setTimeout(() => { if (input.checked && document.querySelector('.bstep.is-active').dataset.bstep === '1') bZeige(2); }, 450);
+    });
+  });
+  document.querySelector('[data-bnext]').addEventListener('click', () => {
+    if (!bForm.querySelector('input[name=anliegen]:checked')) { document.getElementById('anliegenError').style.display = 'block'; return; }
+    bZeige(2);
+  });
+  bForm.addEventListener('input', clearError); bForm.addEventListener('change', clearError);
+  bForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let ok = true;
+    bForm.querySelectorAll('.field input[required], .field textarea[required]').forEach((inp) => {
+      const field = inp.closest('.field');
+      let valid = inp.type === 'checkbox' ? inp.checked : inp.value.trim().length > 0;
+      if (valid && inp.type === 'tel') valid = inp.value.replace(/[^\d+]/g, '').length >= 6;
+      field.classList.toggle('has-error', !valid); inp.classList.toggle('is-invalid', !valid);
+      if (!valid) ok = false;
+    });
+    if (!ok) return;
+    const btn = document.getElementById('bSubmitBtn'); const err = document.getElementById('bSubmitError');
+    err.style.display = 'none'; btn.disabled = true; btn.textContent = 'Einen Moment …';
+    const daten = new URLSearchParams(new FormData(bForm));
+    const opt = { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: daten.toString() };
+    let gesendet = false, grund = '';
+    for (const ziel of ['/', location.pathname]) {
+      try { const r = await fetch(ziel, opt); if (r.ok) { gesendet = true; break; } grund = 'HTTP ' + r.status; } catch (ex) { grund = ex && ex.message || 'Netzwerkfehler'; }
+    }
+    window.dataLayer = window.dataLayer || [];
+    if (!gesendet && !istTestumgebung) {
+      console.error('[Bestandspatient] Übermittlung fehlgeschlagen:', grund);
+      err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Rückruf anfordern';
+      window.dataLayer.push({ event: 'bestand_submit_failed', grund: grund });
+      return;
+    }
+    const vn = document.getElementById('bVorname').value.trim();
+    document.getElementById('bDankeTitel').textContent = vn ? 'Danke, ' + vn + ' – wir rufen Sie zurück!' : 'Danke – wir rufen Sie zurück!';
+    window.dataLayer.push({ event: 'bestand_rueckruf', anliegen: (bForm.querySelector('input[name=anliegen]:checked') || {}).value || '' });
+    bZeige(3);
+  });
+
   document.querySelectorAll('[data-next]').forEach((b) => b.addEventListener('click', () => { clearTimeout(autoWeiter); if (validate(current)) show(current + 1); }));
   document.querySelectorAll('[data-back]').forEach((b) => b.addEventListener('click', () => show(Math.max(1, current - 1))));
   form.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && current < 6) { e.preventDefault(); if (validate(current)) show(current + 1); }
+    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && current < 7) { e.preventDefault(); if (validate(current)) show(current + 1); }
   });
 
   /* Absenden: Netlify Forms via fetch, danach Calendly-Schritt */
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (!validate(6)) return;
+    if (!validate(7)) return;
     const btn = document.getElementById('submitBtn');
     const err = document.getElementById('submitError');
     err.style.display = 'none';
@@ -334,7 +481,7 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
     const tel = document.getElementById('telefon').value.trim();
     document.getElementById('greetName').textContent = vorname ? vorname + ', fast geschafft – jetzt noch den Termin wählen' : 'Fast geschafft – jetzt noch den Termin wählen';
     document.getElementById('phoneEcho').textContent = tel ? 'wir rufen Sie unter ' + tel + ' an' : 'Ihre Nummer haben wir schon';
-    show(7);
+    show(8);
 
     const load = () => {
       window.Calendly.initInlineWidget({
@@ -399,6 +546,7 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
   <input type="hidden" name="form-name" value="erstgespraech-daten">
   <input name="bot-field">
     <input name="interesse">
+    <input name="patientenstatus">
     <input name="quelle_url">
     <input name="vorname">
     <input name="nachname">

@@ -210,3 +210,13 @@ Im ersten Schritt (Themenauswahl) geht es 1,6 Sekunden nach der letzten Auswahl 
 weiter; ein weiterer Klick startet den Zähler neu, der Weiter-Button bleibt. Hinweistext mit
 kleinem Kreis erscheint unter der Auswahl (`#autoHint`, CSS `.auto-hint`). Nach jeder Änderung
 an Formular-Seiten die Versionskennung `?v=` an CSS/JS hochzählen (jetzt 20260918).
+
+
+## Patientenstatus-Weiche (Stand 10.10.2026)
+
+Schritt 1 fragt „Waren Sie schon einmal bei uns in Behandlung?“. **Neupatient** → bisheriger Funnel
+(Themen → Kontakt → Calendly), Feld `patientenstatus=Neupatient` in beiden Listen. **Bestandspatient** →
+kurzer Weg ohne Calendly: Anliegen (Kontrolle / laufende Behandlung / neues Anliegen / Rückfrage) →
+Name, Telefon, Erreichbarkeit → Rückruf-Zusage. Eigenes Netlify-Formular **`bestandspatient`** (in Netlify
+nach dem Deploy Benachrichtigung einrichten!). Keine Google-Ads-Conversion für diesen Weg.
+`dataLayer`-Event `patientenstatus` (neu/bestand) für GTM/Vibetrack.

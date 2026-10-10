@@ -1,103 +1,94 @@
-const ROUTES = Object.freeze({
-  'erstgespraech-daten': 'keramik',
-  'telefonische-anfrage': 'telefon',
-  'praxis-anfrage-daten': 'website',
-});
+/* LeadTable-Anbindung
+ * --------------------------------------------------------------------------
+ * Netlify ruft diese Datei nach JEDEM Formular-Eingang automatisch auf.
+ * Sie uebersetzt die Netlify-Felder in die Schluessel, die LeadTable erwartet,
+ * und schickt sie an den Custom Webhook.
+ *
+ * Einrichtung (einmalig):
+ *   1. In LeadTable: Neue Quelle verknuepfen -> Custom Webhook -> URL kopieren.
+ *   2. In Netlify: Site configuration -> Environment variables ->
+ *      LEADTABLE_WEBHOOK_URL = die kopierte URL.
+ *   3. Deployen, Testlead abschicken, in LeadTable das Mapping pruefen.
+ *
+ * Wichtig: keine Webhook-URL hier hineinschreiben. Der Ordner wird
+ * mitveroeffentlicht (publish = "."), die Datei waere oeffentlich lesbar.
+ */
 
-function jsonResponse(statusCode, body) {
-  return { statusCode, headers: { 'content-type': 'application/json; charset=utf-8' }, body: JSON.stringify(body) };
+/* Welche Netlify-Formulare an LeadTable gehen.
+ * Die Funnel schicken pro Person ZWEI Eingaenge: erst "...-daten" (Fragen
+ * ausgefuellt), nach der Kalenderbuchung noch einmal den Haupteingang.
+ * Wuerden beide durchgereicht, staende die Person zweimal in LeadTable.
+ * Darum zaehlt der erste - der kommt immer, auch ohne Buchung. */
+const WEITERLEITEN = {
+  'telefonische-anfrage': true,
+  'praxis-anfrage-daten': true,
+  'erstgespraech-daten': true,
+  'praxis-anfrage': false,
+  'erstgespraech': false
+};
+
+/* Links die LeadTable-Schluessel, rechts die Feldnamen aus dem HTML.
+ * Nur die rechte Seite aendert sich, wenn ein Formular umgebaut wird. */
+function aufLeadTable(d, formName) {
+  const name = [d.vorname, d.nachname].filter(Boolean).join(' ').trim();
+
+  return {
+    name: name || d.name || '',
+    email: d.email || '',
+    phone: d.telefon || '',
+    termindatum: d.termindatum || d.calendly_termin || '',
+    interesse: d.interesse || '',
+    erreichbarkeit: d.erreichbarkeit || '',
+    quelle: d.quelle || '',
+    quelle_url: d.quelle_url || '',
+    notiz: d.notiz || '',
+    status: d.status || '',
+    formular: formName || ''
+  };
 }
 
-function isPlainObject(value) {
-  return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
+exports.handler = async (event) => {
+  const ziel = process.env.LEADTABLE_WEBHOOK_URL;
+  if (!ziel) {
+    console.error('LEADTABLE_WEBHOOK_URL ist nicht gesetzt - nichts gesendet.');
+    return { statusCode: 200 };
+  }
 
-function validEndpoint(endpoint) {
-  if (!endpoint) return null;
+  let payload;
   try {
-    const url = new URL(endpoint);
-    if (url.protocol !== 'https:' || url.hostname !== 'api-v2.lead-table.com' || url.port || url.username || url.password) return null;
-    return url.toString();
-  } catch { return null; }
-}
+    payload = JSON.parse(event.body).payload || {};
+  } catch (ex) {
+    console.error('Payload nicht lesbar:', ex.message);
+    return { statusCode: 200 };
+  }
 
-function parseSubmission(rawBody) {
-  const body = typeof rawBody === 'string' ? JSON.parse(rawBody || '{}') : rawBody;
-  if (!isPlainObject(body)) throw new Error('Invalid submission');
-  const payload = Object.hasOwn(body, 'payload') ? body.payload : body;
-  if (!isPlainObject(payload)) throw new Error('Invalid submission');
-  const formName = payload.form_name ?? payload.formName ?? payload.data?.['form-name'];
-  const route = ROUTES[formName];
-  if (!route) return null;
-  if (typeof payload.id !== 'string' || !/^[a-f0-9]{24}$/i.test(payload.id) || !isPlainObject(payload.data)) throw new Error('Invalid submission');
-  return { id: payload.id, formName, route, createdAt: String(payload.created_at ?? ''), data: payload.data };
-}
+  const formName = payload.form_name || '';
+  if (WEITERLEITEN[formName] !== true) {
+    console.log('Uebersprungen (nicht in WEITERLEITEN):', formName);
+    return { statusCode: 200 };
+  }
 
-function value(input) {
-  return input === undefined || input === null ? '' : String(input).trim();
-}
+  const lead = aufLeadTable(payload.data || {}, formName);
 
-function buildLeadTablePayload(submission) {
-  const data = submission.data;
-  return { fields: {
-    name: [data.vorname, data.nachname].map(value).filter(Boolean).join(' '),
-    email: value(data.email),
-    phone: value(data.telefon),
-    termindatum: value(data.termindatum || data.calendly_termin),
-    interesse: value(data.interesse),
-    erreichbarkeit: value(data.erreichbarkeit),
-    quelle: value(data.quelle),
-    quelle_url: value(data.quelle_url),
-    notiz: value(data.notiz),
-    status: value(data.status),
-    formular: submission.formName,
-    netlify_submission_id: submission.id,
-    eingang: submission.createdAt,
-  } };
-}
+  /* Ohne Kontaktdaten ist der Eintrag wertlos - meist ein Bot. */
+  if (!lead.email && !lead.phone) {
+    console.log('Ohne E-Mail und Telefon - nicht gesendet.');
+    return { statusCode: 200 };
+  }
 
-function buildSubmissionHandler({ endpoints, fetchImpl = fetch, timeoutMs = 10_000, signalFactory = (ms) => AbortSignal.timeout(ms) }) {
-  const endpointUrls = {
-    keramik: validEndpoint(endpoints?.keramik),
-    telefon: validEndpoint(endpoints?.telefon),
-    website: validEndpoint(endpoints?.website),
-  };
-  return async function handler(event) {
-    let submission;
-    try { submission = parseSubmission(event?.body ?? '{}'); }
-    catch { return jsonResponse(400, { ok: false, error: 'Invalid submission payload' }); }
-    if (!submission) return jsonResponse(200, { ok: true, ignored: true });
-    const endpoint = endpointUrls[submission.route];
-    if (!endpoint) return jsonResponse(500, { ok: false, error: 'Integration is not configured' });
-    try {
-      const response = await fetchImpl(endpoint, {
-        method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(buildLeadTablePayload(submission)), redirect: 'error',
-        signal: signalFactory(timeoutMs),
-      });
-      if (!response.ok) return jsonResponse(502, { ok: false, error: 'LeadTable forwarding failed' });
-      const responseBody = (await response.text()).trim();
-      let leadUid = null;
-      try {
-        const result = JSON.parse(responseBody);
-        if (result?.success !== true) return jsonResponse(502, { ok: false, error: 'LeadTable forwarding failed' });
-        leadUid = result.uid ?? null;
-      } catch {
-        if (!/^[a-f0-9]{24}$/i.test(responseBody)) return jsonResponse(502, { ok: false, error: 'LeadTable forwarding failed' });
-        leadUid = responseBody;
-      }
-      return jsonResponse(200, { ok: true, route: submission.route, leadUid });
-    } catch (error) {
-      console.error('LeadTable forwarding failed', error?.name ?? 'Error');
-      return jsonResponse(502, { ok: false, error: 'LeadTable forwarding failed' });
-    }
-  };
-}
+  try {
+    const res = await fetch(ziel, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(lead)
+    });
+    const antwort = await res.text();
+    console.log('LeadTable', res.status, antwort.slice(0, 300));
+  } catch (ex) {
+    console.error('LeadTable nicht erreichbar:', ex.message);
+  }
 
-const handler = buildSubmissionHandler({ endpoints: {
-  keramik: process.env.LEADTABLE_KERAMIK_WEBHOOK_URL,
-  telefon: process.env.LEADTABLE_TELEFON_WEBHOOK_URL,
-  website: process.env.LEADTABLE_WEBSITE_WEBHOOK_URL,
-} });
-
-module.exports = { ROUTES, parseSubmission, buildLeadTablePayload, buildSubmissionHandler, handler };
+  /* Immer 200: ein Fehler hier darf den Netlify-Eingang nicht entwerten,
+   * der Lead liegt ohnehin auch in der Netlify-Liste. */
+  return { statusCode: 200 };
+};
