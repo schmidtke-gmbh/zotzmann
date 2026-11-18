@@ -43,6 +43,13 @@
     Cache-Control = "public, max-age=0, must-revalidate"
 
 # Alte OnePage-URLs (Google-Ads-Sitelinks) weiter bedienen – Rewrite mit 200, keine Weiterleitung
+# VibeTrack-Markierungen (/termin/anfrage-gesendet, /termin/termin-gebucht) beim Neuladen zurück aufs Formular (302, weil die Seite relative Pfade nutzt)
+[[redirects]]
+  from = "/termin/*"
+  to = "/termin"
+  status = 302
+  force = true
+
 [[redirects]]
   from = "/termin"
   to = "/termin.html"

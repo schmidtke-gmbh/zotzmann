@@ -226,7 +226,7 @@ const CALENDLY_URL = 'https://calendly.com/zahnarzt-zotzmann/15min?hide_event_ty
 // Nach der Buchung wird auf die Danke-Seite der Hauptdomain weitergeleitet –
 // wichtig, damit Vibetrack die Conversion der Landingpage zuordnen kann.
 const DANKE_URL = 'https://www.zahnarzt-zotzmann.de/dankeseite';
-const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
+const DANKE_DELAY = 3500; // ms: Bestätigung kurz sichtbar, und VibeTrack hat Zeit, „Termin gebucht“ zu melden
 /* =========================== */
 
 (function () {
@@ -452,6 +452,20 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
   });
 
   /* Absenden: Netlify Forms via fetch, danach Calendly-Schritt */
+  /* ---------- Markierungen für VibeTrack ----------
+     VibeTrack zählt Conversions über die Seitenadresse. Beim Absenden und
+     nach der Buchung ändern wir deshalb nur die Adresse (ohne Neuladen):
+       …/termin/anfrage-gesendet  -> Auslöser „Anfrage gesendet“ (Lead)
+       …/termin/termin-gebucht    -> Auslöser „Termin gebucht“
+     replaceState legt keinen Eintrag im Zurück-Verlauf an. Lädt jemand die
+     Adresse neu, leitet Netlify ihn auf das Formular um. */
+  function vtSchritt(name) {
+    try {
+      var basis = location.pathname.replace(/\/(anfrage-gesendet|termin-gebucht)\/?$/, '').replace(/\.html$/, '').replace(/\/$/, '');
+      history.replaceState(history.state, '', basis + '/' + name + location.search + location.hash);
+    } catch (err) {}
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!validate(7)) return;
@@ -462,6 +476,7 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
     const data = new URLSearchParams(new FormData(form));
     formularDaten = data;
     const ergebnis = await uebermitteln(data, EINGANG_DATEN, 'ohne_termin');
+    vtSchritt('anfrage-gesendet');   // erst nach dem Versand, weil uebermitteln() die Adresse als Ausweichziel nutzt
     window.dataLayer = window.dataLayer || [];
     if (!ergebnis.ok) {
       /* Bewusst NICHT abbrechen: Der Termin ist das Ziel, und Calendly erfasst
@@ -524,6 +539,7 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
           if (!r.ok) console.error('[Funnel] Übermittlung an "' + EINGANG_LEAD + '" fehlgeschlagen:', r.grund);
         });
       }
+      vtSchritt('termin-gebucht');   // nach dem Versand, siehe oben
       // Weiterleitung auf die Danke-Seite der Hauptdomain (Conversion-Tracking Vibetrack)
       if (DANKE_URL) {
         const note = document.getElementById('redirectNote');
