@@ -1,7 +1,7 @@
 /* Meta-Pixel der Praxis (derselbe wie auf www.zahnarzt-zotzmann.de).
    Meldet hier den Seitenaufruf. Den Lead meldet termin.html direkt bei der
-   Calendly-Buchung und leitet mit ?lp=1 auf die Danke-Seite der Hauptdomain
-   weiter; die zählt dann nicht noch einmal. Beides gehört zusammen.
+   Calendly-Buchung und leitet mit ?lp=1 (plus Meta- und Google-Klick-Kennung)
+   auf die Danke-Seite der Hauptdomain weiter; die zählt dann nicht noch einmal. Beides gehört zusammen.
 
    Einwilligung: gleiche Regel wie Vibetrack für die übrigen Werbe-Pixel.
    Ist dort ein Cookie-Banner aktiv, lädt der Pixel erst nach der
@@ -68,4 +68,33 @@
     var klick = new URLSearchParams(location.search).get('fbclid');
     if (klick) sessionStorage.setItem('fbclid', klick);
   } catch (e) {}
+
+  /* Klick-Kennung von Google Ads für die Danke-Seite der Hauptdomain, aus
+     demselben Grund. gclid = normaler Klick, gbraid/wbraid = Klicks aus
+     iOS-Apps. Die Danke-Seite meldet dort die Google-Conversion; mit der
+     Kennung in der Adresse ordnet Google sie der Anzeige zu, auch wenn der
+     Besucher auf der Hauptdomain noch nicht zugestimmt hat. */
+  var GOOGLE_KENNUNGEN = ['gclid', 'gbraid', 'wbraid'];
+  try {
+    var adresse = new URLSearchParams(location.search);
+    GOOGLE_KENNUNGEN.forEach(function (name) {
+      var wert = adresse.get(name);
+      if (wert) sessionStorage.setItem(name, wert);
+    });
+  } catch (e) {}
+
+  /* Liefert z. B. "gclid=abc" (URL-kodiert) oder null. */
+  window.googleKlickKennung = function () {
+    var adresse;
+    try { adresse = new URLSearchParams(location.search); } catch (e) { adresse = null; }
+    for (var i = 0; i < GOOGLE_KENNUNGEN.length; i++) {
+      var name = GOOGLE_KENNUNGEN[i], wert = null;
+      try { wert = (adresse && adresse.get(name)) || sessionStorage.getItem(name); } catch (e) {}
+      if (wert) return name + '=' + encodeURIComponent(wert);
+    }
+    /* Nach Zustimmung legt Google selbst ein Cookie an: GCL.<Zeit>.<gclid> */
+    var c = cookie('_gcl_aw');
+    if (c) { var teile = c.split('.'); if (teile.length >= 3) return 'gclid=' + encodeURIComponent(teile.slice(2).join('.')); }
+    return null;
+  };
 })();

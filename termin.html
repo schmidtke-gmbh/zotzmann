@@ -18,7 +18,7 @@
   <!-- Vibetrack (Attribution / Conversion-Tracking) -->
   <script async src="https://app.vibetrack.com/tracker.js?site-id=VT-2D5F635B-48367"></script>
   <!-- Meta-Pixel (nur Seitenaufruf, Einwilligung wie Vibetrack) -->
-  <script src="assets/js/meta-pixel.js?v=20261116" defer></script>
+  <script src="assets/js/meta-pixel.js?v=20261118" defer></script>
 </head>
 <body class="funnel-page">
 
@@ -529,11 +529,13 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
         const note = document.getElementById('redirectNote');
         if (note) note.hidden = false;
         setTimeout(function () {
-          /* Meta-Klick-Kennung mitgeben, damit der Lead auf der Hauptdomain der Anzeige zugeordnet wird */
+          /* Meta- und Google-Klick-Kennung mitgeben, damit der Lead auf der Hauptdomain der Anzeige zugeordnet wird */
           var klick = window.metaKlickKennung ? window.metaKlickKennung() : null;
+          var gKlick = window.googleKlickKennung ? window.googleKlickKennung() : null;
           var zusatz = [];
           if (leadGemeldet) zusatz.push('lp=1');
           if (klick) zusatz.push('fbclid=' + encodeURIComponent(klick));
+          if (gKlick) zusatz.push(gKlick);
           window.location.href = DANKE_URL + (zusatz.length ? '?' + zusatz.join('&') : '');
         }, DANKE_DELAY);
       }
