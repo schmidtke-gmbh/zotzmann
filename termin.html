@@ -509,6 +509,10 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
       document.getElementById('booked').classList.add('is-visible');
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ event: 'call_booked' });
+      /* Meta: Lead genau jetzt melden, nicht erst nach der Weiterleitung – die kommt nicht immer an.
+         Die Danke-Seite der Hauptdomain zählt dann nicht noch einmal (Kennzeichen lp=1). */
+      var leadGemeldet = false;
+      try { if (window.fbq) { window.fbq('track', 'Lead'); leadGemeldet = true; } } catch (err) {}
       /* Zweiter Eingang: erst JETZT gilt die Anfrage als vollständig.
          Die Differenz zwischen beiden Netlify-Listen ist die Absprungquote. */
       if (formularDaten) {
@@ -527,7 +531,10 @@ const DANKE_DELAY = 2500; // ms, damit die Bestätigung kurz sichtbar ist
         setTimeout(function () {
           /* Meta-Klick-Kennung mitgeben, damit der Lead auf der Hauptdomain der Anzeige zugeordnet wird */
           var klick = window.metaKlickKennung ? window.metaKlickKennung() : null;
-          window.location.href = DANKE_URL + (klick ? '?fbclid=' + encodeURIComponent(klick) : '');
+          var zusatz = [];
+          if (leadGemeldet) zusatz.push('lp=1');
+          if (klick) zusatz.push('fbclid=' + encodeURIComponent(klick));
+          window.location.href = DANKE_URL + (zusatz.length ? '?' + zusatz.join('&') : '');
         }, DANKE_DELAY);
       }
     }

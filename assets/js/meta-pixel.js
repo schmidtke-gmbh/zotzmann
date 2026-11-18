@@ -1,7 +1,7 @@
 /* Meta-Pixel der Praxis (derselbe wie auf www.zahnarzt-zotzmann.de).
-   Meldet hier nur den Seitenaufruf. Der Lead wird wie bisher auf
-   www.zahnarzt-zotzmann.de/dankeseite gezählt – hier KEIN Lead-Ereignis
-   ergänzen, sonst zählt Meta jede Buchung doppelt.
+   Meldet hier den Seitenaufruf. Den Lead meldet termin.html direkt bei der
+   Calendly-Buchung und leitet mit ?lp=1 auf die Danke-Seite der Hauptdomain
+   weiter; die zählt dann nicht noch einmal. Beides gehört zusammen.
 
    Einwilligung: gleiche Regel wie Vibetrack für die übrigen Werbe-Pixel.
    Ist dort ein Cookie-Banner aktiv, lädt der Pixel erst nach der
