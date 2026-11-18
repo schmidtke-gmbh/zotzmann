@@ -457,12 +457,18 @@ const DANKE_DELAY = 3500; // ms: Bestätigung kurz sichtbar, und VibeTrack hat Z
      nach der Buchung ändern wir deshalb nur die Adresse (ohne Neuladen):
        …/termin/anfrage-gesendet  -> Auslöser „Anfrage gesendet“ (Lead)
        …/termin/termin-gebucht    -> Auslöser „Termin gebucht“
-     replaceState legt keinen Eintrag im Zurück-Verlauf an. Lädt jemand die
-     Adresse neu, leitet Netlify ihn auf das Formular um. */
+     replaceState legt keinen Eintrag im Zurück-Verlauf an. Nach 4 s steht wieder die
+     normale Adresse da. */
   function vtSchritt(name) {
     try {
       var basis = location.pathname.replace(/\/(anfrage-gesendet|termin-gebucht)\/?$/, '').replace(/\.html$/, '').replace(/\/$/, '');
-      history.replaceState(history.state, '', basis + '/' + name + location.search + location.hash);
+      var markiert = basis + '/' + name;
+      history.replaceState(history.state, '', markiert + location.search + location.hash);
+      /* VibeTrack meldet sich nach ca. 0,3 s. Nach 4 s wieder die normale Adresse,
+         damit Neuladen oder Teilen nie auf einer Seite landet, die es nicht gibt. */
+      setTimeout(function () {
+        if (location.pathname === markiert) history.replaceState(history.state, '', basis + location.search + location.hash);
+      }, 4000);
     } catch (err) {}
   }
 
