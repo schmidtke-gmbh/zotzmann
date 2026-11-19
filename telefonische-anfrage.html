@@ -65,13 +65,23 @@
       </div>
 
       <div class="field">
+        <label for="patientenstatus">Neu- oder Bestandspatient? *</label>
+        <select id="patientenstatus" name="patientenstatus" required>
+          <option value="" disabled selected>Bitte auswählen</option>
+          <option>Neupatient</option>
+          <option>Bestandspatient</option>
+        </select>
+        <span class="field__error">Bitte auswählen – danach richtet sich die Liste „Bestandspatienten“ im Hub.</span>
+      </div>
+
+      <div class="field">
         <label for="interesse">Interesse an</label>
         <textarea id="interesse" name="interesse" rows="4" placeholder="Anliegen, Behandlungswunsch, Besonderheiten …"></textarea>
       </div>
 
       <div class="field">
-        <label for="termindatum">Termindatum <span class="label-soft">(wenn möglich)</span></label>
-        <input id="termindatum" name="termindatum" type="date">
+        <label for="termindatum">Termin in der Praxis <span class="label-soft">(Datum und Uhrzeit)</span></label>
+        <input id="termindatum" name="termindatum" type="datetime-local">
       </div>
 
       <div class="field">

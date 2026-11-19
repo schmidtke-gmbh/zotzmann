@@ -614,6 +614,8 @@ p:last-child { margin-bottom: 0; }
 .embed-page .calendly-wrap { min-height: 720px; }
 .choice-list--compact .choice { padding: 13px 16px; font-size: .95rem; }
 @media (min-width: 620px) { .choice-list--compact { grid-template-columns: 1fr 1fr; } }
+/* Drei Anliegen der Bestandspatienten nebeneinander statt 2 + 1 */
+@media (min-width: 620px) { .choice-list--drei { grid-template-columns: repeat(3, 1fr); } }
 
 /* ---------- Funnel-Seite: Danke-Seite der Hauptdomain ---------- */
 /* ---------- Sticky Mobile CTA ---------- */
@@ -674,7 +676,7 @@ p:last-child { margin-bottom: 0; }
 }
 .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2320362A' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 18px center; }
 .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--lime); }
-.field input.is-invalid { border-color: var(--red); }
+.field input.is-invalid, .field textarea.is-invalid { border-color: var(--red); }
 .field__error { display: none; color: var(--red); font-size: .85rem; }
 .field.has-error .field__error { display: block; }
 .field--check { grid-template-columns: auto 1fr; align-items: start; gap: 12px; font-size: .9rem; color: var(--green-80); }
